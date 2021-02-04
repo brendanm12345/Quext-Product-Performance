@@ -1,112 +1,73 @@
 <template>
   <div id="app">
-    <div class="flex">
-      <div
-        class="bg-white bg-opacity-75 w-full z-10 h-15 inline-flex items-center"
-      >
-        <img src="./assets/quextLogo.png" class="h-16 pl-4 pt-3 pb-3" />
-        <div class="text-2xl font-light pl-1">Product Performance</div>
-      </div>
-    </div>
+    <Navbar/>
+    <router-view />
+
     <div class="flex flex-col pt-2 pl-2">
       <div class="bg-gray-100 bg-opacity-75 w-40 z-10 p-4 rounded-lg">
         <div class="text-xl font-semibold">Filters</div>
         <div>
-          <input type="checkbox" name="digitalHuman" class="checkbox" />
+          <input
+            type="checkbox"
+            id="digitalHuman"
+            class="checkbox"
+            v-model="digitalHumanChecked"
+            checked
+          />
           <label for="digitalHuman"> Digital Human</label><br />
         </div>
         <div>
-          <input type="checkbox" name="websites" />
+          <input
+            type="checkbox"
+            id="websites"
+            v-model="websitesChecked"
+            checked
+          />
           <label for="websites"> Wesbites</label><br />
         </div>
         <div>
-          <input type="checkbox" name="propertyMgt" />
+          <input
+            type="checkbox"
+            id="propertyMgt"
+            v-model="propertyMgtChecked"
+            checked
+          />
           <label for="propertyMgt"> Property Mgt.</label><br />
         </div>
         <div>
-          <input type="checkbox" name="connect" />
+          <input
+            type="checkbox"
+            id="connect"
+            v-model="connectChecked"
+            checked
+          />
           <label for="connect"> Connect</label><br />
         </div>
         <div>
-          <input type="checkbox" name="iot" />
+          <input type="checkbox" id="iot" v-model="iotChecked" checked />
           <label for="iot"> IoT</label><br />
         </div>
       </div>
       <button
-        @click="geocode"
+        @click="openModal"
         class="bg-gray-100 bg-opacity-75 hover:bg-opacity-100 w-40 z-10 p-4 rounded-lg mt-2 text-xl font-semibold"
       >
         Communities
       </button>
     </div>
-    <BaseMap :locations="this.locations" />
-    <!--
-
-    <div class="inline-flex">
-      <div class="">
-        <div class="bg-white shadow-lg h-16 w-400">
-          <img src="./assets/quextLogo.png" class="h-16 pl-4 pt-3 pb-3 pr-10" />
-        </div>
-        <div
-          id="filters"
-          class="m-2 bg-gray-200 bg-opacity-75 rounded-lg shadow-xl"
-        >
-          <div class="flex flex-inline pt-3 pl-3">
-            <div class="pr-2 pt-1">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 15 19"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fill-rule="evenodd"
-                  clip-rule="evenodd"
-                  d="M5.05025 4.05025C7.78392 1.31658 12.2161 1.31658 14.9497 4.05025C17.6834 6.78392 17.6834 11.2161 14.9497 13.9497L10 18.8995L5.05025 13.9497C2.31658 11.2161 2.31658 6.78392 5.05025 4.05025ZM10 11C11.1046 11 12 10.1046 12 9C12 7.89543 11.1046 7 10 7C8.89543 7 8 7.89543 8 9C8 10.1046 8.89543 11 10 11Z"
-                  fill="#000000"
-                />
-              </svg>
-            </div>
-            <div id="title" class="font-semibold text-xl pb-1">FILTERS</div>
-          </div>
-
-          <ul class="flex flex-col pr-4 pl-4">
-            <div id="digital human" class="pb-1">
-              <input
-                type="checkbox"
-                name="digitalHuman"
-                value="Digital Human"
-              />
-              <label for="digitalHuman" class="pl-2">Digital Human</label>
-            </div>
-            <div id="Property Mgt." class="pb-1">
-              <input type="checkbox" name="propertyMgt" value="Property Mgt." />
-              <label for="propertyMgt" class="pl-2">Property Mgt.</label>
-            </div>
-            <div id="websites" class="pb-1">
-              <input type="checkbox" name="websites" value="Websites" />
-              <label for="websites" class="pl-2">Websites</label>
-            </div>
-            <div id="Connect" class="pb-1">
-              <input type="checkbox" name="connect" value="Connect" />
-              <label for="connect" class="pl-2">Connect</label>
-            </div>
-            <div id="IoT" class="pb-1">
-              <input type="checkbox" name="Iot" value="Iot" />
-              <label for="Iot" class="pl-2">Iot</label>
-            </div>
-          </ul>
-        </div>
-        <div
-          id="communities"
-          class="m-2 p-4 bg-gray-200 bg-opacity-75 rounded-lg shadow-xl flex flex-inline"
-        >
-          <button class="font-semibold text-xl">COMMUNITIES</button>
-        </div>
-       
-      </div>
-      -->
+    <BaseMap
+      :locations="this.locations"
+      :digitalHumanChecked="this.digitalHumanChecked"
+      :websitesChecked="this.websitesChecked"
+      :propertyMgtChecked="this.propertyMgtChecked"
+      :connectChecked="this.connectChecked"
+      :iotChecked="this.iotChecked"
+    />
+    <div
+      v-if="communitiesModal == true"
+      class="absolute z-40 inset-0 opacity-25 bg-black"
+    ></div>
+    <Modal v-model="communitiesModal" />
   </div>
 </template>
 
@@ -121,88 +82,156 @@ import axios from "axios";
 
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import BaseMap from "./components/BaseMap.vue";
-
-//import SideBar from "./components/SideBar";
+import Modal from "./components/Modal";
+import Navbar from "./components/Navbar.vue";
 
 export default {
-  components: { BaseMap },
+  name: "MapPage",
+  components: { BaseMap, Modal, Navbar },
   data() {
     return {
+      communitiesModal: false,
+      digitalHumanChecked: true,
+      websitesChecked: true,
+      propertyMgtChecked: true,
+      connectChecked: true,
+      iotChecked: true,
       locations: [],
       customers: [],
-      allCommunities: [
-        {
-          name: "Madera Residential",
-          coords: { lat: -90, lng: 45 },
-        },
-        {
-          name: "Menlo Park",
-          coords: { lat: -89, lng: 40 },
-        },
-        {
-          name: "Menlo Park",
-          coords: { lat: -80, lng: 37 },
-        },
-      ],
-      allProducts: [
-        { lat: -90, lng: 45 },
-        { lat: -89, lng: 40 },
-        { lat: -80, lng: 37 },
-      ],
+      customerAddresses: [],
+      communityAddresses: [],
     };
   },
 
   methods: {
-    fetchAllProducts() {
-      this.locations = this.allProducts;
-      axios.post(
-        "https://api.mapbox.com/geocoding/v5/mapbox.places/Washington.json?limit=2&access_token=pk.eyJ1IjoiYnJlbmRhbm0xMjM0IiwiYSI6ImNraGdpOHFrcDAzNmMzNHB0cWd5N3lybWgifQ.pbNyNcQG6kNyESAo20P6nQ"
-      );
-    },
-    fetchWebsites() {
-      this.locations = this.allProducts;
-      console.log("got all websites");
-    },
-    fetchDigitalHuman() {
-      this.locations = this.allProducts;
-      console.log("got all digital humans");
+    openModal() {
+      this.communitiesModal = !this.communitiesModal;
     },
 
-    // geocodes every customer headquarters address
-    geocode() {
-      this.customers.forEach(element => {
-        const addressString = element.address.address + ", " + element.address.city + ", " + element.address.state;
-        geocodingClient
-        .forwardGeocode({
-          query: addressString
-        })
-        .send()
-        .then((response) => {
-          const match = response.body;
-         // console.log(addressString);
-          //console.log(match.features[0].center);
-          this.locations.push(match.features[0].center);
+    // fills customer and community address arrays with address strings
+    // TODO: this function needs to be able to fill the communityAddresses and customerAddresses with objects containing address string and color string. The color string will be black for customers and for communities will be determined by each product that is true the corresponding color will be associated with it. Probably no for loop and just five lines that pushes the object to the array if product is true
+    makeAddresses() {
+      this.customers.forEach((element) => {
+        const addressString =
+          element.address.address +
+          ", " +
+          element.address.city +
+          ", " +
+          element.address.state;
+        const addressAndColor = [addressString, "black"];
+        console.log(addressAndColor);
+        this.customerAddresses.push(addressAndColor);
+        element.communities.forEach((community) => {
+          const addressString =
+            community.address.address +
+            ", " +
+            community.address.city +
+            ", " +
+            community.address.state;
+          if (community.digital_human == true) {
+            this.communityAddresses.push([
+              addressString,
+              "#35c4e7",
+              [-6, 0],
+              this.digitalHumanChecked,
+              "digitalHuman",
+            ]);
+          }
+          if (community.core_pms == true) {
+            this.communityAddresses.push([
+              addressString,
+              "#ff6f48",
+              [0, 0],
+              this.propertyMgtChecked,
+              "propertyMgt",
+            ]);
+          }
+          if (community.websites == true) {
+            this.communityAddresses.push([
+              addressString,
+              "#b383ff",
+              [0, 6],
+              this.websitesChecked,
+              "websites",
+            ]);
+          }
+          if (community.connect == true) {
+            this.communityAddresses.push([
+              addressString,
+              "#3bd4ae",
+              [0, -6],
+              this.connectChecked,
+              "connect",
+            ]);
+          }
+          if (community.iot == true) {
+            this.communityAddresses.push([
+              addressString,
+              "#94c127",
+              [6, 0],
+              this.iotChecked,
+              "iot",
+            ]);
+          }
         });
-        console.log(this.locations);
       });
-
-      // geocodingClient
-      //   .forwardGeocode({
-      //     query: this.customers[0].address.address + ", " + this.customers[0].address.city + ", " + this.customers[0].address.state,
-      //   })
-      //   .send()
-      //   .then((response) => {
-      //     const match = response.body;
-      //     console.log(this.customers[0].address.address + ", " + this.customers[0].address.city + ", " + this.customers[0].address.state);
-      //     console.log(match.features[0].center);
-      //     this.locations = match.features[0].center;
-      //   });
+      this.geocode(this.communityAddresses);
+      console.log("customer", this.locations);
     },
+    // TODO: make geocode function take in an input of customer and community addresses arrays
+    // geocodes every customer headquarters address
+    geocode(addresses) {
+      addresses.forEach((address) => {
+        geocodingClient
+          .forwardGeocode({
+            query: address[0],
+          })
+          .send()
+          .then((response) => {
+            const match = response.body;
+            // make object with match.features[0].center and color and push to locations
+            this.locations.push([
+              match.features[0].center,
+              address[1],
+              address[2],
+              address[3],
+              address[4],
+            ]);
+          });
+      });
+    },
+
+    // geocode() {
+    //   this.customers.forEach((element) => {
+    //     const addressString =
+    //       element.address.address +
+    //       ", " +
+    //       element.address.city +
+    //       ", " +
+    //       element.address.state;
+    //     geocodingClient
+    //       .forwardGeocode({
+    //         query: addressString,
+    //       })
+    //       .send()
+    //       .then((response) => {
+    //         const match = response.body;
+    //         // console.log(addressString);
+    //         //console.log(match.features[0].center);
+    //         this.locations.push(match.features[0].center);
+    //       });
+    //     console.log(this.locations);
+    //   });
+    //},
     async getCustomers() {
-      const res = await axios.get("http://localhost:3000/api/customer");
-      this.customers = res.data;
-      console.log(res.data);
-      // console.log(this.customers[1].address.address + ", " + this.customers[1].address.city + ", " + this.customers[1].address.state)
+      await axios
+        .get("http://localhost:3000/api/customer")
+        .then((res) => {
+          this.customers = res.data;
+        })
+        .catch((error) => console.log(error))
+        .finally(() => this.makeAddresses());
+      //this.geocode(this.communityAddresses);
     },
   },
   created() {
@@ -215,31 +244,52 @@ export default {
   color: black;
   background-color: rgba(0, 0, 0, 0.08);
 }
+input[type="checkbox"] {
+  visibility: hidden;
+}
+input[type="checkbox"] + label:before {
+  border: 1px solid #333;
+  border-radius: 3px;
+  content: "\00a0";
+  display: inline-block;
+  font: 14px/1em sans-serif;
+  height: 14px;
+  margin: 0.35em 0.25em 0.25em -0.85em;
+  padding: 0;
+  vertical-align: top;
+  width: 14px;
+}
+input[type="checkbox"]:checked + label:before {
+  color: white;
+  content: "\2713";
+  text-align: center;
+}
+#digitalHuman:checked + label:before {
+  background: #35c4e7;
+  border: #35c4e7;
+}
+#propertyMgt:checked + label:before {
+  background: #ff6f48;
+  border: #ff6f48;
+}
+#websites:checked + label:before {
+  background: #b383ff;
+  border: #b383ff;
+}
+#connect:checked + label:before {
+  background: #3bd4ae;
+  border: #3bd4ae;
+}
+#iot:checked + label:before {
+  background: #94c127;
+  border: #94c127;
+}
+
+input[type="checkbox"]:checked + label:after {
+  font-weight: bold;
+}
+
+input[type="checkbox"]:focus + label::before {
+  outline: rgb(59, 153, 252) auto 5px;
+}
 </style>
-
-
- <!--
-        <ul class="pt-3 flex flex-col">
-          <div class="pb-3 pt-3 pl-4 hover:bg-gray-200">
-            <button
-              @click="fetchAllProducts"
-              class="focus:outline-none text-xl font-semibold"
-            >
-              PRODUCTS
-            </button>
-          </div>
-          <div class="pb-3 pt-3 pl-4 hover:bg-gray-200">
-            <button @click="fetchWebsites" class="focus:outline-none text-xl">
-              Websites
-            </button>
-          </div>
-          <div class="pb-3 pt-3 pl-4 hover:bg-gray-200">
-            <button
-              @click="fetchDigitalHuman"
-              class="focus:outline-none text-xl"
-            >
-              Digital Human
-            </button>
-          </div>
-        </ul>
-        -->

@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import App from '../App'
+//import App from '../App'
 import CustomerPage from '../components/CustomerPage'
+import BaseMap from '../components/BaseMap'
 
 Vue.use(VueRouter)
 
@@ -13,8 +14,8 @@ const routes = [
 //   },
   {
     path: '/',
-    name: 'MapPage',
-    component: App
+    name: 'BaseMap',
+    component: BaseMap
   },
   {
     path: '/customers',

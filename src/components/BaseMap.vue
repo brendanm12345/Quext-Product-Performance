@@ -26,7 +26,7 @@ export default {
     };
   },
 
-  mounted() {
+  created() {
     setTimeout(this.addMarkers, 2000);
     // this.locations.forEach(location => new mapboxgl.Marker()
     //   .setLngLat([location.lng, location.lat])

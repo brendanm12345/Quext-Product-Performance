@@ -1,8 +1,33 @@
 <template>
   <div id="app">
-    <Navbar/>
-    <router-view />
-
+    <CustomerPage v-if="showCustomerPage == true"/>
+    <div class="flex">
+      <div
+        id="nav"
+        class="bg-white w-full shadow-md z-30 h-15 flex items-center align-center justify-between"
+      >
+        <div class="flex items-center align-center">
+          <img src="./assets/quextLogo.png" class="h-16 pl-4 pt-3 pb-3" />
+          <div class="text-2xl font-light pl-1">Product Performance</div>
+        </div>
+        <div class="pt-2 pb-2">
+          <button
+            class="bg-white rounded-sm pt-1 pl-3 pr-3 pb-1 hover:bg-gray-100 focus:outline-none"
+            @click="showCustomerPage = false"
+            :class="{ active: showCustomerPage == false } "
+          >
+            MAP
+          </button>
+          <button
+            class="mr-3 bg-white rounded-sm pt-1 pl-3 pr-3 pb-1 hover:bg-gray-100 focus:outline-none"
+            @click="showCustomerPage = true"
+            :class="{ active: showCustomerPage == true }"
+          >
+            CUSTOMERS
+          </button>
+        </div>
+      </div>
+    </div>
     <div class="flex flex-col pt-2 pl-2">
       <div class="bg-gray-100 bg-opacity-75 w-40 z-10 p-4 rounded-lg">
         <div class="text-xl font-semibold">Filters</div>
@@ -83,13 +108,14 @@ import axios from "axios";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import BaseMap from "./components/BaseMap.vue";
 import Modal from "./components/Modal";
-import Navbar from "./components/Navbar.vue";
+import CustomerPage from "./components/CustomerPage";
 
 export default {
   name: "MapPage",
-  components: { BaseMap, Modal, Navbar },
+  components: { BaseMap, Modal, CustomerPage },
   data() {
     return {
+      showCustomerPage: false,
       communitiesModal: false,
       digitalHumanChecked: true,
       websitesChecked: true,
@@ -240,6 +266,9 @@ export default {
 };
 </script>
 <style lang="css">
+.active {
+  font-weight: bold;
+}
 #checkbox {
   color: black;
   background-color: rgba(0, 0, 0, 0.08);

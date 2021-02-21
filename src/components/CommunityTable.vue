@@ -3,43 +3,23 @@
     <table class="w-full">
       <thead>
         <tr class="text-gray-500 text-sm">
-          <th id="button column"></th>
-          <th id="nonbutton" class="font-medium">NAME</th>
-          <th id="nonbutton" class="font-medium">UNITS</th>
-          <th id="nonbutton" class="font-medium">COMMUNITIES</th>
-          <th id="nonbutton" class="font-medium">LOCATION</th>
+          <th id="name" class="font-medium">NAME</th>
+          <th id="managementCompany" class="font-medium">MANAGEMENT COMPANY</th>
+          <th id="units" class="font-medium">UNITS</th>
+          <th id="location" class="font-medium">LOCATION</th>
+          <th id="products" class="font-medium">PRODUCTS</th>
         </tr>
       </thead>
       <tbody>
-        <template v-for="customer in customers">
-          <tr :key="customer.id">
-            <td id="button">
-              <button
-                class="triangle-right"
-                :class="{ triangleDown: customerClickedOn == customer.id && showCommunities }"
-                @click="
-                  (showCommunities = !showCommunities),
-                    (customerClickedOn = customer.id)
-                "
-              ></button>
+        <template v-for="community in communities">
+          <tr :key="community.id">
+            <td id="name" class="font-bold">{{ community.name }}</td>
+            <td id="managementCompany">{{ community.customer_id }}</td>
+            <td id="units">{{ community.units }}</td>
+            <td id="location">
+              {{ community.address.city }}, {{ community.address.country }}
             </td>
-            <td id="nonbutton" name="name" class="font-bold">{{ customer.name }}</td>
-            <td id="nonbutton">units</td>
-            <td id="nonbutton">{{ customer.communities.length }}</td>
-            <td id="nonbutton">
-              {{ customer.address.city }}, {{ customer.address.country }}
-            </td>
-          </tr>
-
-          <template v-for="community in customer.communities">
-            <tr
-              v-if="showCommunities == true && customerClickedOn == customer.id"
-              :key="community.id"
-            >
-              <td id="button"></td>
-              <td id="nonbutton" name="name">{{ community.name }}</td>
-              <td id="nonbutton">{{ community.units }}</td>
-              <td id="nonbutton" colspan="2">
+            <td id="product" colspan="1">
                 <div v-if="checkProducts(community) != null">
                   <ul
                     v-for="product in checkProducts(community)"
@@ -55,8 +35,7 @@
                   </ul>
                 </div>
               </td>
-            </tr>
-          </template>
+          </tr>
         </template>
       </tbody>
     </table>
@@ -65,7 +44,7 @@
 
 <script>
 export default {
-  props: ["customers"],
+  props: ["communities"],
   data() {
     return {
       showCommunities: false,
@@ -92,16 +71,6 @@ export default {
       }
       return hasProducts;
     },
-    toggleId(customerClickedOn, id) {
-      console.log("trying to toggle");
-      if (customerClickedOn == id) {
-        console.log("inside if");
-        customerClickedOn = null;
-      } else {
-        console.log("inside else");
-        customerClickedOn = id;
-      }
-    },
   },
 };
 </script>
@@ -112,13 +81,12 @@ table {
   font-size: 18;
 }
 table,
-th,
-#button {
+th {
   padding-right: 10px;
 }
-#nonbutton {
-  padding-right: 15px;
-  min-width: 250px;
+td {
+  padding-right: 20px;
+  min-width: 40px;
   padding-top: 15px;
   padding-bottom: 15px;
   padding-left: 0px;
@@ -126,6 +94,8 @@ th,
 
 th {
   text-align: left;
+  padding-bottom: 15px;
+  padding-top: 15px;
 }
 td {
   //font-weight: bold;

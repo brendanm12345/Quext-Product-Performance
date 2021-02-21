@@ -3,8 +3,10 @@ import VueRouter from 'vue-router'
 //import App from '../App'
 import CustomerPage from '../components/CustomerPage'
 import BaseMap from '../components/BaseMap'
+import Vuetify from "vuetify";
 
 Vue.use(VueRouter)
+Vue.use(Vuetify);
 
 const routes = [
 //   {

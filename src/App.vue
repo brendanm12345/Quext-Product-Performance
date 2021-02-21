@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <CustomerPage v-if="showCustomerPage == true"/>
+    <CustomerPage :customers="this.customers" :communities="this.communities" v-if="showCustomerPage == true"/>
     <div class="flex">
       <div
         id="nav"
@@ -73,12 +73,7 @@
           <label for="iot"> IoT</label><br />
         </div>
       </div>
-      <button
-        @click="openModal"
-        class="bg-gray-100 bg-opacity-75 hover:bg-opacity-100 w-40 z-10 p-4 rounded-lg mt-2 text-xl font-semibold"
-      >
-        Communities
-      </button>
+      
     </div>
     <BaseMap
       :locations="this.locations"
@@ -124,6 +119,7 @@ export default {
       iotChecked: true,
       locations: [],
       customers: [],
+      communities: [],
       customerAddresses: [],
       communityAddresses: [],
     };
@@ -259,9 +255,19 @@ export default {
         .finally(() => this.makeAddresses());
       //this.geocode(this.communityAddresses);
     },
+    async getCommunities() {
+      await axios
+        .get("http://localhost:3000/api/communities")
+        .then((res) => {
+          this.communities = res.data;
+        })
+        .catch((error) => console.log(error))
+      //this.geocode(this.communityAddresses);
+    },
   },
   created() {
     this.getCustomers();
+    this.getCommunities();
   },
 };
 </script>

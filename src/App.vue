@@ -29,7 +29,7 @@
       </div>
     </div>
     <div class="flex flex-col pt-2 pl-2">
-      <div class="bg-gray-100 bg-opacity-75 w-40 z-10 p-4 rounded-lg">
+      <div class="bg-gray-100 bg-opacity-75 w-40 z-10 p-4 rounded-lg shadow-sm">
         <div class="text-xl font-semibold">Filters</div>
         <div>
           <input
@@ -135,21 +135,21 @@ export default {
     makeAddresses() {
       this.customers.forEach((element) => {
         const addressString =
-          element.address.address +
+          element.address +
           ", " +
-          element.address.city +
+          element.city +
           ", " +
-          element.address.state;
+          element.state;
         const addressAndColor = [addressString, "black"];
         console.log(addressAndColor);
         this.customerAddresses.push(addressAndColor);
         element.communities.forEach((community) => {
           const addressString =
-            community.address.address +
+            community.address +
             ", " +
-            community.address.city +
+            community.city +
             ", " +
-            community.address.state;
+            community.state;
           if (community.digital_human == true) {
             this.communityAddresses.push([
               addressString,

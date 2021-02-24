@@ -21,19 +21,47 @@
 
         <div id="customers data" v-if="customersView == true">
           <div id="searchbar + buttons" class="flex">
-            <button class="addButton hover:underline">
-              Add Customer
-            </button>
+            <button class="addButton hover:underline">Add Customer</button>
+            <template>
+              <vue-csv-import
+                url="http://localhost:3000/api/customer"
+                :map-fields="['name', 'units', 'address', 'city']"
+              >
+                <vue-csv-map></vue-csv-map>
+              </vue-csv-import>
+
+              <!--
+              <vue-csv-import
+                url="http://localhost:3000/api/customer"
+                v-model="csv"
+                :map-fields="['name', 'units', 'field', 'names']"
+              >
+                <vue-csv-toggle-headers></vue-csv-toggle-headers>
+                <vue-csv-errors></vue-csv-errors>
+                <vue-csv-input name="file">upload</vue-csv-input>
+                <vue-csv-map></vue-csv-map>
+                <vue-csv-submit url="http://localhost:3000/api/customer"></vue-csv-submit>
+              </vue-csv-import>
+              -->
+            </template>
           </div>
-          <CustomerTable :customers="this.customers"/>
+          <CustomerTable :customers="this.customers" />
         </div>
         <div id="community data" v-if="customersView == false">
           <div id="searchbar + buttons" class="flex">
-            <button class="addButton hover:underline">
+            <button
+              class="addButton hover:underline"
+              @click="addCommunityModal = !addCommunityModal"
+            >
               Add Community
             </button>
           </div>
-          <CommunityTable :communities="this.communities"/>
+          <CommunityTable :communities="this.communities" />
+          <div
+            class="absolute z-40 inset-0 opacity-25 bg-black"
+            v-if="addCommunityModal"
+          ></div>
+          <AddCommunityModal v-model="addCommunityModal" />
         </div>
       </div>
     </div>
@@ -41,16 +69,39 @@
 </template>
 
 <script>
+// Fix bug: on submit, an internal server error is caused. Its p[osting an empty array cuz the files isnt being stored or mapped anywhere.
+
+// Use one of the templates for the VueCsvImport component and add data point to reflect
 import CustomerTable from "./CustomerTable";
 import CommunityTable from "./CommunityTable";
+import AddCommunityModal from "./AddCommunityModal";
+import {
+  //VueCsvToggleHeaders,
+  //VueCsvMap,
+  //VueCsvInput,
+  //VueCsvErrors,
+  VueCsvImport,
+} from "vue-csv-import";
 
 export default {
   name: "CustomerPage",
   props: ["customers", "communities"],
-  components: { CustomerTable, CommunityTable },
+  components: {
+    CustomerTable,
+    CommunityTable,
+    AddCommunityModal,
+    VueCsvImport,
+    //VueCsvToggleHeaders,
+    // VueCsvInput,
+    //VueCsvErrors,
+    //VueCsvMap,
+  },
+
   data() {
     return {
       customersView: true,
+      addCommunityModal: false,
+      csv: null,
     };
   },
 };
@@ -70,6 +121,5 @@ button.addButton {
   padding-left: 15px;
   padding-top: 5px;
   padding-bottom: 5px;
-  
 }
 </style>

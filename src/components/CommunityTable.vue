@@ -17,7 +17,7 @@
             <td id="managementCompany">{{ community.customer_id }}</td>
             <td id="units">{{ community.units }}</td>
             <td id="location">
-              {{ community.address.city }}, {{ community.address.country }}
+              {{ community.city }}, {{ community.country }}
             </td>
             <td id="product" colspan="1">
                 <div v-if="checkProducts(community) != null">

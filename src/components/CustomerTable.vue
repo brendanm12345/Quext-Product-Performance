@@ -27,7 +27,7 @@
             <td id="nonbutton">units</td>
             <td id="nonbutton">{{ customer.communities.length }}</td>
             <td id="nonbutton">
-              {{ customer.address.city }}, {{ customer.address.country }}
+              {{ customer.city }}, {{ customer.country }}
             </td>
           </tr>
 

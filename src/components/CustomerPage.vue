@@ -21,7 +21,12 @@
 
         <div id="customers data" v-if="customersView == true">
           <div id="searchbar + buttons" class="flex">
-            <button class="addButton hover:underline">Add Customer</button>
+            <button
+              class="addButton hover:underline"
+              @click="addCustomerModal = !addCustomerModal"
+            >
+              Add Customer
+            </button>
             <template>
               <vue-csv-import
                 url="http://localhost:3000/api/customer"
@@ -46,6 +51,11 @@
             </template>
           </div>
           <CustomerTable :customers="this.customers" />
+          <div
+            class="absolute z-40 inset-0 opacity-25 bg-black"
+            v-if="addCustomerModal"
+          ></div>
+          <AddCustomerModal v-model="addCustomerModal" />
         </div>
         <div id="community data" v-if="customersView == false">
           <div id="searchbar + buttons" class="flex">
@@ -75,13 +85,8 @@
 import CustomerTable from "./CustomerTable";
 import CommunityTable from "./CommunityTable";
 import AddCommunityModal from "./AddCommunityModal";
-import {
-  //VueCsvToggleHeaders,
-  //VueCsvMap,
-  //VueCsvInput,
-  //VueCsvErrors,
-  VueCsvImport,
-} from "vue-csv-import";
+import AddCustomerModal from "./AddCustomerModal";
+import VueCsvImport from "vue-csv-import";
 
 export default {
   name: "CustomerPage",
@@ -90,6 +95,7 @@ export default {
     CustomerTable,
     CommunityTable,
     AddCommunityModal,
+    AddCustomerModal,
     VueCsvImport,
     //VueCsvToggleHeaders,
     // VueCsvInput,
@@ -101,6 +107,7 @@ export default {
     return {
       customersView: true,
       addCommunityModal: false,
+      addCustomerModal: false,
       csv: null,
     };
   },

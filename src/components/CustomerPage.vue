@@ -27,7 +27,20 @@
             >
               Add Customer
             </button>
+            
+            <!--
             <template>
+              <h4 class="mb-4">Result:</h4>
+              <vue-csv-import
+                autoMatchFields = true
+                url="http://localhost:3003/service/auth/v1/customers/test"
+                v-model="csv"
+                :map-fields="['columnA', 'columnB']"
+              ></vue-csv-import>
+              <div class="mt-2">
+                {{ csv }}
+              </div>
+              
               <vue-csv-import
                 url="http://localhost:3000/api/customer"
                 :map-fields="['name', 'units', 'address', 'city']"
@@ -35,7 +48,7 @@
                 <vue-csv-map></vue-csv-map>
               </vue-csv-import>
 
-              <!--
+             
               <vue-csv-import
                 url="http://localhost:3000/api/customer"
                 v-model="csv"
@@ -47,8 +60,9 @@
                 <vue-csv-map></vue-csv-map>
                 <vue-csv-submit url="http://localhost:3000/api/customer"></vue-csv-submit>
               </vue-csv-import>
-              -->
+              
             </template>
+            -->
           </div>
           <CustomerTable :customers="this.customers" />
           <div
@@ -86,7 +100,7 @@ import CustomerTable from "./CustomerTable";
 import CommunityTable from "./CommunityTable";
 import AddCommunityModal from "./AddCommunityModal";
 import AddCustomerModal from "./AddCustomerModal";
-import VueCsvImport from "vue-csv-import";
+//import VueCsvImport from "vue-csv-import";
 
 export default {
   name: "CustomerPage",
@@ -96,7 +110,7 @@ export default {
     CommunityTable,
     AddCommunityModal,
     AddCustomerModal,
-    VueCsvImport,
+    //VueCsvImport,
     //VueCsvToggleHeaders,
     // VueCsvInput,
     //VueCsvErrors,

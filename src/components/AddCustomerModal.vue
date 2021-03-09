@@ -70,10 +70,10 @@
                 />
               </div>
             </div>
-            <div>
+            <div class="text-white">
               <button
                 type="submit"
-                class="text-white bg-blue-400 float-right font-semibold text-sm mt-4 pt-2 pb-2 pl-3 pr-3 rounded-md"
+                class="bg-blue-500 float-right font-bold text-sm mt-4 pt-2 pb-2 pl-3 pr-3 rounded-md"
               >
                 NEXT
               </button>
@@ -85,6 +85,7 @@
           <form id="new community form" @submit.prevent="submitPage2">
             <div class="text-lg font-bold">Communities</div>
             <button
+              type="button"
               class="addButton hover:underline"
               @click="addCommunityMiniModal = !addCommunityMiniModal"
             >
@@ -169,22 +170,72 @@
                   />
                 </div>
               </div>
-              <div class="inline-flex w-full pb-2">
+              <div class="block w-full pb-2">
                 <div class="pb-2 text-sm font-semibold block">PRODUCTS</div>
+                <div id="pills">
+                  <button
+                    type="button"
+                    @click="selectDigitalHuman = !selectDigitalHuman"
+                    class="unclickedProduct w-auto font-semibold text-sm shadow-sm pl-3 pb-1 pt-1 pr-3 mr-2"
+                    :class="{ digitalHuman: selectDigitalHuman }"
+                  >
+                    digital human
+                  </button>
+                  <button
+                    type="button"
+                    @click="selectWebsites = !selectWebsites"
+                    class="unclickedProduct w-auto font-semibold text-sm shadow-sm pl-3 pb-1 pt-1 pr-3 mr-2"
+                    :class="{ websites: selectWebsites }"
+                  >
+                    websites
+                  </button>
+                  <button
+                    type="button"
+                    @click="selectPropertyMgt = !selectPropertyMgt"
+                    class="unclickedProduct w-auto font-semibold text-sm shadow-sm pl-3 pb-1 pt-1 pr-3 mr-2"
+                    :class="{ corePms: selectPropertyMgt }"
+                  >
+                    property mgt.
+                  </button>
+                  <button
+                    type="button"
+                    @click="selectConnect = !selectConnect"
+                    class="unclickedProduct w-auto font-semibold text-sm shadow-sm pl-3 pb-1 pt-1 pr-3 mr-2"
+                    :class="{ connect: selectConnect }"
+                  >
+                    connect
+                  </button>
+                  <button
+                    type="button"
+                    @click="selectIot = !selectIot"
+                    class="unclickedProduct w-auto font-semibold text-sm shadow-sm pl-3 pb-1 pt-1 pr-3 mr-2"
+                    :class="{ iot: selectIot }"
+                  >
+                    iot
+                  </button>
+                </div>
               </div>
-              <div id="cancel and add buttons" class="flex justify-end">
-                <button
-                  type="submit"
-                  class="text-white bg-blue-400 blueborder font-semibold text-xs mt-4 pt-2 pb-2 pl-3 pr-3 rounded-md mr-2"
-                >
-                  ADD
-                </button>
-                <button
-                  @click="addCommunityMiniModal = false"
-                  class="text-black blackborder font-semibold text-xs mt-4 pt-2 pb-2 pl-3 pr-3 rounded-md"
-                >
-                  CANCEL
-                </button>
+              <div
+                id="cancel and add buttons"
+                class="text-white flex justify-end"
+              >
+                <div class="text-white">
+                  <button
+                    type="submit"
+                    class="bg-blue-500 blueborder font-bold text-xs mt-4 pt-2 pb-2 pl-3 pr-3 rounded-md mr-2"
+                  >
+                    ADD
+                  </button>
+                </div>
+                <div class="text-black">
+                  <button
+                    type="button"
+                    @click="addCommunityMiniModal = false"
+                    class="blackborder font-semibold text-xs mt-4 pt-2 pb-2 pl-3 pr-3 rounded-md"
+                  >
+                    CANCEL
+                  </button>
+                </div>
               </div>
             </form>
             <div id="added community pills" class="mt-4 mb-4">
@@ -196,10 +247,10 @@
                 {{ community.name }}
               </span>
             </div>
-            <div class="flex justify-end">
+            <div class="text-white flex justify-end">
               <button
                 type="submit"
-                class="text-white bg-blue-400 font-semibold text-sm mt-4 pt-2 pb-2 pl-3 pr-3 rounded-md"
+                class="text-white bg-blue-500 font-bold text-sm mt-4 pt-2 pb-2 pl-4 pr-4 rounded-md"
               >
                 SUBMIT
               </button>
@@ -233,6 +284,11 @@ export default {
       addCommunityMiniModal: false,
       communitiesToPost: [],
       presentCustomerId: "",
+      selectDigitalHuman: false,
+      selectWebsites: false,
+      selectPropertyMgt: false,
+      selectConnect: false,
+      selectIot: false,
     };
   },
   methods: {
@@ -249,19 +305,29 @@ export default {
         .then((Response) => {
           console.log(Response);
           this.showNext = true;
-          this.getCommunities();
+          this.presentCustomerId = Response.data["id"];
         })
         .catch((Error) => {
           console.log(Error);
         });
 
-    // find a way to the the present customer Id into data and add ID to the communities
-      this.presentCustomerID = "",
+      // find a way to the the present customer Id into data and add ID to the communities
+
       this.name = "";
       this.streetAddress = "";
       this.city = "";
       this.state = "";
       this.country = "";
+    },
+    async getCustomers() {
+      await axios
+        .get("http://localhost:3000/api/customer")
+        .then((res) => {
+          this.customers = res.data;
+        })
+        .catch((error) => console.log(error))
+        .finally(() => this.makeAddresses());
+      //this.geocode(this.communityAddresses);
     },
     addCommunityToArray() {
       this.communitiesToPost.push({
@@ -271,6 +337,11 @@ export default {
         city: this.city,
         state: this.state,
         country: this.country,
+        digital_human: this.selectDigitalHuman,
+        core_pms: this.selectPropertyMgt,
+        websites: this.selectWebsites,
+        connect: this.selectConnect,
+        iot: this.selectIot,
       });
       this.addCommunityMiniModal = false;
       this.name = "";
@@ -279,29 +350,52 @@ export default {
       this.city = "";
       this.state = "";
       this.country = "";
+      this.selectDigitalHuman = false;
+      this.selectPropertyMgt = false;
+      this.selectWebsites = false;
+      this.selectConnect = false;
+      this.selectIot = false;
     },
     submitPage2() {
+      console.log("submit page 2");
       this.communitiesToPost.forEach((community) => {
+        console.log("iterated " + [community.name]);
         axios
           .post("http://localhost:3000/api/communities", {
             name: community.name,
             units: community.units,
-            customer_id: "",
-            address: community.streetAddress,
+            customer_id: this.presentCustomerId,
+            address: community.address,
             city: community.city,
             state: community.state,
             country: community.country,
+            digital_human: community.digital_human,
+            core_pms: community.core_pms,
+            websites: community.websites,
+            connect: community.connect,
+            iot: community.iot,
           })
           .then((Response) => {
             console.log(Response);
-            this.showNext = true;
-            this.getCommunities();
+            this.getCustomers();
           })
           .catch((Error) => {
             console.log(Error);
           });
+        community.units = "";
+        community.streetAddress = "";
+        community.city = "";
+        community.state = "";
+        community.country = "";
+        community.digital_human = null;
+        community.core_pms = null;
+        community.websites = null;
+        community.connect = null;
+        community.iot = null;
       });
-      this.value.required = false;
+
+      //closing the modal
+      this.$emit("input", !this.value);
     },
   },
 };
@@ -309,7 +403,7 @@ export default {
 
 <style lang="scss" scoped>
 button.addButton {
-  border-style: solid;
+  border-style: inset solid;
   border-width: 1px;
   border-color: black;
   border-radius: 7px;
@@ -327,5 +421,49 @@ button.blueborder {
   border-style: solid;
   border-width: 1px;
   border-color: #60a5fa;
+}
+button.unclickedProduct {
+  color: gray;
+  border-width: 1px;
+  border-color: gray;
+  border-style: solid;
+  border-radius: 20px;
+  outline: transparent;
+}
+
+button.digitalHuman {
+  background-color: #35c4e7;
+  color: white;
+  border-color: #35c4e7;
+  border-width: 1px;
+  border-style: solid;
+}
+button.corePms {
+  background-color: #ff6f48;
+  color: white;
+  border-color: #ff6f48;
+  border-width: 1px;
+  border-style: solid;
+}
+button.websites {
+  background-color: #b383ff;
+  color: white;
+  border-color: #b383ff;
+  border-width: 1px;
+  border-style: solid;
+}
+button.connect {
+  background-color: #3bd4ae;
+  color: white;
+  border-color: #3bd4ae;
+  border-width: 1px;
+  border-style: solid;
+}
+button.iot {
+  background-color: #94c127;
+  color: white;
+  border-color: #94c127;
+  border-width: 1px;
+  border-style: solid;
 }
 </style>

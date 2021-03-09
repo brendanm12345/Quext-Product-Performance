@@ -3,6 +3,9 @@ import App from './App.vue'
 import router from './router'
 import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.min.css";
+import { VueCsvImportPlugin } from "../node_modules/vue-csv-import/src";
+
+Vue.use(VueCsvImportPlugin);
 
 Vue.config.productionTip = false
 

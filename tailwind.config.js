@@ -8,6 +8,11 @@ module.exports = {
           DEFAULT: '#94c127',
           dark: '#009eeb',
         },
+        digitalHuman: {
+          light: '#FFFFF',
+          DEFAULT: '#85d7ff',
+          dark: '#009eeb',
+        },
       }
     }
   }

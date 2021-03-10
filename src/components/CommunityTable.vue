@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div id="customerName" class="text-4xl pr-4 font-extrabold text-black">
+      {{ customerClickedOn.name }}
+    </div>
     <table class="w-full">
       <thead>
         <tr class="text-gray-500 text-sm">
@@ -11,30 +14,28 @@
         </tr>
       </thead>
       <tbody>
-        <template v-for="community in communities">
+        <template v-for="community in this.customerClickedOn.communities">
           <tr :key="community.id">
             <td id="name" class="font-bold">{{ community.name }}</td>
             <td id="managementCompany">{{ community.customer_id }}</td>
             <td id="units">{{ community.units }}</td>
-            <td id="location">
-              {{ community.city }}, {{ community.country }}
-            </td>
+            <td id="location">{{ community.city }}, {{ community.country }}</td>
             <td id="product" colspan="1">
-                <div v-if="checkProducts(community) != null">
-                  <ul
-                    v-for="product in checkProducts(community)"
-                    :key="product.value"
-                    class="float-left font-bold text-sm flex"
+              <div v-if="checkProducts(community) != null">
+                <ul
+                  v-for="product in checkProducts(community)"
+                  :key="product.value"
+                  class="float-left font-bold text-sm flex"
+                >
+                  <div
+                    class="w-auto rounded-full shadow-sm text-white pl-3 pb-1 pt-1 pr-3 mr-3"
+                    :style="{ 'background-color': product[1] }"
                   >
-                    <div
-                      class="w-auto rounded-full shadow-sm text-white pl-3 pb-1 pt-1 pr-3 mr-3"
-                      :style="{ 'background-color': product[1] }"
-                    >
-                      {{ product[0] }}
-                    </div>
-                  </ul>
-                </div>
-              </td>
+                    {{ product[0] }}
+                  </div>
+                </ul>
+              </div>
+            </td>
           </tr>
         </template>
       </tbody>
@@ -43,15 +44,24 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
-  props: ["communities"],
+  props: ["customerClickedOn", "showCommunities"],
   data() {
     return {
-      showCommunities: false,
-      customerClickedOn: "",
+      presentCustomer: "",
     };
   },
   methods: {
+    async getCustomerInfo(customerId) {
+      console.log("trying to get" + customerId);
+      await axios
+        .get("http://localhost:3000/api/customer/" + customerId)
+        .then((res) => {
+          this.presentCustomer = res.data;
+        })
+        .catch((error) => console.log(error));
+    },
     checkProducts(community) {
       var hasProducts = [];
       if (community.digital_human) {
@@ -70,6 +80,10 @@ export default {
         hasProducts.push(["iot", "#94c127"]);
       }
       return hasProducts;
+    },
+    created() {
+      this.getCustomerInfo(this.customerClickedOn);
+      console.log(this.presentCustomer);
     },
   },
 };
@@ -118,8 +132,8 @@ td {
   height: 0;
   margin-top: 7px;
   padding-right: 0px;
-  border-top: 10px solid  #d2d6dc;
+  border-top: 10px solid #d2d6dc;
   border-left: 6px solid transparent;
-  border-right: 6px solid transparent
+  border-right: 6px solid transparent;
 }
 </style>

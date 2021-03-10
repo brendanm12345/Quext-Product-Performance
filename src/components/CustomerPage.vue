@@ -3,31 +3,24 @@
     <div class="bg-white w-screen h-screen flex align-center justify-between">
       <div id="data area" class="w-screen pl-24 pr-24 pt-32">
         <div id="Customers Commumities Buttons" class="text-4xl">
-          <button
-            class="pr-4 font-extrabold text-gray-400 hover:underline focus:outline-none"
+          <div
+            class="w-1/2 pr-4 font-extrabold text-black focus:outline-none"
             @click="customersView = true"
             :class="{ active: customersView }"
           >
             Customers
-          </button>
-          <button
-            class="font-extrabold text-gray-400 hover:underline focus:outline-none"
-            @click="customersView = false"
-            :class="{ active: !customersView }"
-          >
-            Communities
-          </button>
+          </div>
         </div>
 
         <div id="customers data" v-if="customersView == true">
-          <div id="searchbar + buttons" class="flex">
+          <div id="searchbar + buttons" class="inline">
             <button
               class="addButton hover:underline"
               @click="addCustomerModal = !addCustomerModal"
             >
               Add Customer
             </button>
-            
+
             <!--
             <template>
               <h4 class="mb-4">Result:</h4>
@@ -71,22 +64,6 @@
           ></div>
           <AddCustomerModal v-model="addCustomerModal" />
         </div>
-        <div id="community data" v-if="customersView == false">
-          <div id="searchbar + buttons" class="flex">
-            <button
-              class="addButton hover:underline"
-              @click="addCommunityModal = !addCommunityModal"
-            >
-              Add Community
-            </button>
-          </div>
-          <CommunityTable :communities="this.communities" />
-          <div
-            class="absolute z-40 inset-0 opacity-25 bg-black"
-            v-if="addCommunityModal"
-          ></div>
-          <AddCommunityModal v-model="addCommunityModal" />
-        </div>
       </div>
     </div>
   </div>
@@ -97,8 +74,6 @@
 
 // Use one of the templates for the VueCsvImport component and add data point to reflect
 import CustomerTable from "./CustomerTable";
-import CommunityTable from "./CommunityTable";
-import AddCommunityModal from "./AddCommunityModal";
 import AddCustomerModal from "./AddCustomerModal";
 //import VueCsvImport from "vue-csv-import";
 
@@ -107,8 +82,6 @@ export default {
   props: ["customers", "communities"],
   components: {
     CustomerTable,
-    CommunityTable,
-    AddCommunityModal,
     AddCustomerModal,
     //VueCsvImport,
     //VueCsvToggleHeaders,
@@ -129,10 +102,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.active {
-  color: black;
-  text-decoration: none;
-}
 button.addButton {
   border-style: solid;
   border-width: 1px;

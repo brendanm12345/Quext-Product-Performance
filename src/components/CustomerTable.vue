@@ -1,9 +1,8 @@
 <template>
   <div>
-    <table class="w-full">
+    <table v-if="showCommunities == false" class="w-full">
       <thead>
         <tr class="text-gray-500 text-sm">
-          <th id="button column"></th>
           <th id="nonbutton" class="font-medium">NAME</th>
           <th id="nonbutton" class="font-medium">UNITS</th>
           <th id="nonbutton" class="font-medium">COMMUNITIES</th>
@@ -12,23 +11,19 @@
       </thead>
       <tbody>
         <template v-for="customer in customers">
-          <tr :key="customer.id">
-            <td id="button">
-              <button
-                class="triangle-right"
-                :class="{ triangleDown: customerClickedOn == customer.id && showCommunities }"
-                @click="
-                  (showCommunities = !showCommunities),
-                    (customerClickedOn = customer.id)
-                "
-              ></button>
+          <tr
+            :key="customer.id"
+            class="customerRow"
+            @click="
+              [(showCommunities = true), (getCustomer(customer.id))]
+            "
+          >
+            <td id="nonbutton" name="name" class="font-bold">
+              {{ customer.name }}
             </td>
-            <td id="nonbutton" name="name" class="font-bold">{{ customer.name }}</td>
             <td id="nonbutton">units</td>
             <td id="nonbutton">{{ customer.communities.length }}</td>
-            <td id="nonbutton">
-              {{ customer.city }}, {{ customer.country }}
-            </td>
+            <td id="nonbutton">{{ customer.city }}, {{ customer.country }}</td>
           </tr>
 
           <template v-for="community in customer.communities">
@@ -36,7 +31,6 @@
               v-if="showCommunities == true && customerClickedOn == customer.id"
               :key="community.id"
             >
-              <td id="button"></td>
               <td id="nonbutton" name="name">{{ community.name }}</td>
               <td id="nonbutton">{{ community.units }}</td>
               <td id="nonbutton" colspan="2">
@@ -60,11 +54,17 @@
         </template>
       </tbody>
     </table>
+    <div v-if="showCommunities == true">
+      <CommunityTable :customerClickedOn="this.customerClickedOn" :showCommunities="this.showCommunities"/>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
+import CommunityTable from "./CommunityTable";
 export default {
+  components: { CommunityTable },
   props: ["customers"],
   data() {
     return {
@@ -102,6 +102,14 @@ export default {
         customerClickedOn = id;
       }
     },
+    getCustomer(customerId) {
+      axios
+        .get("http://localhost:3000/api/customer/" + customerId)
+        .then((res) => {
+          this.customerClickedOn = res.data;
+        })
+        .catch((error) => console.log(error))
+    }
   },
 };
 </script>
@@ -129,27 +137,10 @@ th {
 }
 td {
   //font-weight: bold;
-  border-top: 2px solid #d2d6dc;
+  border-top: 2px solid #e5e7eb;
   border-collapse: collapse;
 }
-
-.triangle-right {
-  width: 0;
-  height: 0;
-  padding-right: 2px;
-  border-top: 6px solid transparent;
-  border-left: 10px solid #d2d6dc;
-  border-bottom: 6px solid transparent;
-  outline: transparent;
-}
-
-.triangleDown {
-  width: 0;
-  height: 0;
-  margin-top: 7px;
-  padding-right: 0px;
-  border-top: 10px solid  #d2d6dc;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent
+.customerRow:hover {
+  background-color: #f9fafb;
 }
 </style>

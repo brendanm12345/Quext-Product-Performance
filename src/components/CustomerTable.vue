@@ -1,70 +1,88 @@
 <template>
   <div>
-    <table v-if="showCommunities == false" class="w-full">
-      <thead>
-        <tr class="text-gray-500 text-sm">
-          <th id="nonbutton" class="font-medium">NAME</th>
-          <th id="nonbutton" class="font-medium">UNITS</th>
-          <th id="nonbutton" class="font-medium">COMMUNITIES</th>
-          <th id="nonbutton" class="font-medium">LOCATION</th>
-        </tr>
-      </thead>
-      <tbody>
-        <template v-for="customer in customers">
-          <tr
-            :key="customer.id"
-            class="customerRow"
-            @click="
-              [(showCommunities = true), (getCustomer(customer.id))]
-            "
-          >
-            <td id="nonbutton" name="name" class="font-bold">
-              {{ customer.name }}
-            </td>
-            <td id="nonbutton">units</td>
-            <td id="nonbutton">{{ customer.communities.length }}</td>
-            <td id="nonbutton">{{ customer.city }}, {{ customer.country }}</td>
-          </tr>
-
-          <template v-for="community in customer.communities">
-            <tr
-              v-if="showCommunities == true && customerClickedOn == customer.id"
-              :key="community.id"
-            >
-              <td id="nonbutton" name="name">{{ community.name }}</td>
-              <td id="nonbutton">{{ community.units }}</td>
-              <td id="nonbutton" colspan="2">
-                <div v-if="checkProducts(community) != null">
-                  <ul
-                    v-for="product in checkProducts(community)"
-                    :key="product.value"
-                    class="float-left font-bold text-sm flex"
+    <div class="absolute z-20 flex">
+      <div class="bg-white w-screen h-screen flex align-center justify-between">
+        <div id="data area" class="w-screen pl-24 pr-24 pt-32">
+          <div v-if="showCommunities == false">
+            <CustomerPage />
+            <table class="w-full">
+              <thead>
+                <tr class="text-gray-500 text-sm">
+                  <th id="nonbutton" class="font-medium">NAME</th>
+                  <th id="nonbutton" class="font-medium">UNITS</th>
+                  <th id="nonbutton" class="font-medium">COMMUNITIES</th>
+                  <th id="nonbutton" class="font-medium">LOCATION</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template v-for="customer in customers">
+                  <tr
+                    :key="customer.id"
+                    class="customerRow"
+                    @click="
+                      [(showCommunities = true), getCustomer(customer.id)]
+                    "
                   >
-                    <div
-                      class="w-auto rounded-full shadow-sm text-white pl-3 pb-1 pt-1 pr-3 mr-3"
-                      :style="{ 'background-color': product[1] }"
+                    <td id="nonbutton" name="name" class="font-bold">
+                      {{ customer.name }}
+                    </td>
+                    <td id="nonbutton">units</td>
+                    <td id="nonbutton">{{ customer.communities.length }}</td>
+                    <td id="nonbutton">
+                      {{ customer.city }}, {{ customer.country }}
+                    </td>
+                  </tr>
+
+                  <template v-for="community in customer.communities">
+                    <tr
+                      v-if="
+                        showCommunities == true &&
+                        customerClickedOn == customer.id
+                      "
+                      :key="community.id"
                     >
-                      {{ product[0] }}
-                    </div>
-                  </ul>
-                </div>
-              </td>
-            </tr>
-          </template>
-        </template>
-      </tbody>
-    </table>
-    <div v-if="showCommunities == true">
-      <CommunityTable :customerClickedOn="this.customerClickedOn" :showCommunities="this.showCommunities"/>
+                      <td id="nonbutton" name="name">{{ community.name }}</td>
+                      <td id="nonbutton">{{ community.units }}</td>
+                      <td id="nonbutton" colspan="2">
+                        <div v-if="checkProducts(community) != null">
+                          <ul
+                            v-for="product in checkProducts(community)"
+                            :key="product.value"
+                            class="float-left font-bold text-sm flex"
+                          >
+                            <div
+                              class="w-auto rounded-full shadow-sm text-white pl-3 pb-1 pt-1 pr-3 mr-3"
+                              :style="{ 'background-color': product[1] }"
+                            >
+                              {{ product[0] }}
+                            </div>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </template>
+                </template>
+              </tbody>
+            </table>
+          </div>
+          <div v-if="showCommunities == true">
+            <CommunityTable
+              :customerClickedOn="this.customerClickedOn"
+              :showCommunities="this.showCommunities"
+            />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 import CommunityTable from "./CommunityTable";
+import CustomerPage from "./CustomerPage";
 export default {
-  components: { CommunityTable },
+  components: { CommunityTable, CustomerPage },
   props: ["customers"],
   data() {
     return {
@@ -108,8 +126,8 @@ export default {
         .then((res) => {
           this.customerClickedOn = res.data;
         })
-        .catch((error) => console.log(error))
-    }
+        .catch((error) => console.log(error));
+    },
   },
 };
 </script>

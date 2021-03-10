@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <CustomerPage :customers="this.customers" :communities="this.communities" v-if="showCustomerPage == true"/>
+    <CustomerTable :customers="this.customers" :communities="this.communities" v-if="showCustomerPage == true"/>
     <div class="flex">
       <div
         id="nav"
@@ -103,11 +103,11 @@ import axios from "axios";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import BaseMap from "./components/BaseMap.vue";
 import Modal from "./components/Modal";
-import CustomerPage from "./components/CustomerPage";
+import CustomerTable from "./components/CustomerTable";
 
 export default {
   name: "MapPage",
-  components: { BaseMap, Modal, CustomerPage },
+  components: { BaseMap, Modal, CustomerTable },
   data() {
     return {
       showCustomerPage: false,

@@ -1,7 +1,10 @@
 <template>
+<div>
+<!--
   <div class="absolute z-20 flex">
     <div class="bg-white w-screen h-screen flex align-center justify-between">
-      <div id="data area" class="w-screen pl-24 pr-24 pt-32">
+      <div id="data area" class="w-screen pl-24 pr-24 pt-32"> 
+        -->
         <div id="Customers Commumities Buttons" class="text-4xl">
           <div
             class="w-1/2 pr-4 font-extrabold text-black focus:outline-none"
@@ -57,15 +60,17 @@
             </template>
             -->
           </div>
-          <CustomerTable :customers="this.customers" />
           <div
             class="absolute z-40 inset-0 opacity-25 bg-black"
             v-if="addCustomerModal"
           ></div>
           <AddCustomerModal v-model="addCustomerModal" />
         </div>
+        <!--
       </div>
     </div>
+  </div>
+  -->
   </div>
 </template>
 
@@ -73,7 +78,6 @@
 // Fix bug: on submit, an internal server error is caused. Its p[osting an empty array cuz the files isnt being stored or mapped anywhere.
 
 // Use one of the templates for the VueCsvImport component and add data point to reflect
-import CustomerTable from "./CustomerTable";
 import AddCustomerModal from "./AddCustomerModal";
 //import VueCsvImport from "vue-csv-import";
 
@@ -81,7 +85,6 @@ export default {
   name: "CustomerPage",
   props: ["customers", "communities"],
   components: {
-    CustomerTable,
     AddCustomerModal,
     //VueCsvImport,
     //VueCsvToggleHeaders,

@@ -51,6 +51,7 @@ export default {
             offset: location[2],
             checkbox: location[3],
             id: location[4],
+            owner: location[5],
           },
           geometry: {
             type: "Point",
@@ -76,14 +77,18 @@ export default {
         places.features.forEach(function (feature) {
           var color = feature.properties["color"];
           var offset = feature.properties["offset"];
+          //var owner = feature.properties["owner"];
+
+          //layerID = "poi-" + color + owner; would create the right amount of layers
+          // add all layers to an array?
+
           var layerID = "poi-" + color;
+          //var ownerLayer = "poi" + owner;
           // var checkBox = feature.properties["checkbox"];
           var checkboxId = feature.properties["id"];
-          console.log("HEY " + checkboxId);
 
           // Add a layer for this symbol type if it hasn't been added already.
           if (!map.getLayer(layerID)) {
-            console.log("layer" + layerID + "added");
             map.addLayer({
               id: layerID,
               type: "circle",
@@ -103,7 +108,8 @@ export default {
               },
             });
           }
-          //cant addeventListener to variable. need to find a way to watch for change of variable
+          // need to find a way to only render pins if their layer is checked and their owner is checked. Can I iterate through points in a layer
+          // everytime anything is changed (checkbox / customer selection), run a for loop through all the layers and hide the ones whoses colors arent one of the select colors and whose customers don't match the present customer
           let box = document.getElementById(checkboxId);
           box.addEventListener("click", function (e) {
             console.log("changed");

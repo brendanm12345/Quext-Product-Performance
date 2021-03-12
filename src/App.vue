@@ -140,7 +140,7 @@ export default {
           element.city +
           ", " +
           element.state;
-        const addressAndColor = [addressString, "black"];
+        const addressAndColor = [addressString, element.name];
         console.log(addressAndColor);
         this.customerAddresses.push(addressAndColor);
         element.communities.forEach((community) => {
@@ -157,6 +157,7 @@ export default {
               [-6, 0],
               this.digitalHumanChecked,
               "digitalHuman",
+              element.name,
             ]);
           }
           if (community.core_pms == true) {
@@ -166,6 +167,7 @@ export default {
               [0, 0],
               this.propertyMgtChecked,
               "propertyMgt",
+              element.name,
             ]);
           }
           if (community.websites == true) {
@@ -175,6 +177,7 @@ export default {
               [0, 6],
               this.websitesChecked,
               "websites",
+              element.name,
             ]);
           }
           if (community.connect == true) {
@@ -184,6 +187,7 @@ export default {
               [0, -6],
               this.connectChecked,
               "connect",
+              element.name,
             ]);
           }
           if (community.iot == true) {
@@ -193,6 +197,7 @@ export default {
               [6, 0],
               this.iotChecked,
               "iot",
+              element.name,
             ]);
           }
         });
@@ -218,6 +223,7 @@ export default {
               address[2],
               address[3],
               address[4],
+              address[5],
             ]);
           });
       });

@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="inline-flex justify-between w-full">
 <!--
   <div class="absolute z-20 flex">
     <div class="bg-white w-screen h-screen flex align-center justify-between">
@@ -15,8 +15,8 @@
           </div>
         </div>
 
-        <div id="customers data" v-if="customersView == true">
-          <div id="searchbar + buttons" class="inline">
+        <div id="customers data" v-if="customersView == true" class="w-min">
+          <div id="searchbar + buttons" class="mt-3">
             <button
               class="addButton hover:underline"
               @click="addCustomerModal = !addCustomerModal"

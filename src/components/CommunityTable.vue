@@ -1,13 +1,12 @@
 <template>
   <div>
-    <div id="customerName" class="text-4xl pr-4 font-extrabold text-black">
+    <div id="customerName" class="text-4xl pr-4 font-bold text-black">
       {{ customerClickedOn.name }}
     </div>
     <table class="w-full">
       <thead>
         <tr class="text-gray-500 text-sm">
           <th id="name" class="font-medium">NAME</th>
-          <th id="managementCompany" class="font-medium">MANAGEMENT COMPANY</th>
           <th id="units" class="font-medium">UNITS</th>
           <th id="location" class="font-medium">LOCATION</th>
           <th id="products" class="font-medium">PRODUCTS</th>
@@ -17,7 +16,6 @@
         <template v-for="community in this.customerClickedOn.communities">
           <tr :key="community.id">
             <td id="name" class="font-bold">{{ community.name }}</td>
-            <td id="managementCompany">{{ community.customer_id }}</td>
             <td id="units">{{ community.units }}</td>
             <td id="location">{{ community.city }}, {{ community.country }}</td>
             <td id="product" colspan="1">
@@ -96,10 +94,10 @@ table {
 }
 table,
 th {
-  padding-right: 10px;
+  padding-right: 100px;
 }
 td {
-  padding-right: 20px;
+  padding-right: 100px;
   min-width: 40px;
   padding-top: 15px;
   padding-bottom: 15px;

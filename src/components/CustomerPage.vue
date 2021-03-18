@@ -1,30 +1,30 @@
 <template>
-<div class="inline-flex justify-between w-full">
-<!--
+  <div class="inline-flex justify-between w-full">
+    <!--
   <div class="absolute z-20 flex">
     <div class="bg-white w-screen h-screen flex align-center justify-between">
       <div id="data area" class="w-screen pl-24 pr-24 pt-32"> 
         -->
-        <div id="Customers Commumities Buttons" class="text-4xl">
-          <div
-            class="w-1/2 pr-4 font-extrabold text-black focus:outline-none"
-            @click="customersView = true"
-            :class="{ active: customersView }"
-          >
-            Customers
-          </div>
-        </div>
+    <div id="Customers Commumities Buttons" class="text-4xl">
+      <div
+        class="w-1/2 pr-4 font-extrabold text-black focus:outline-none"
+        @click="customersView = true"
+        :class="{ active: customersView }"
+      >
+        Customers
+      </div>
+    </div>
 
-        <div id="customers data" v-if="customersView == true" class="w-min">
-          <div id="searchbar + buttons" class="mt-3">
-            <button
-              class="addButton hover:underline"
-              @click="addCustomerModal = !addCustomerModal"
-            >
-              Add Customer
-            </button>
+    <div id="customers data" v-if="customersView == true" class="w-min">
+      <div id="searchbar + buttons" class="mt-3 inline-flex">
+        <button
+          class="addButton hover:underline mr-4"
+          @click="addCustomerModal = !addCustomerModal"
+        >
+          Add Customer
+        </button>
 
-            <!--
+        <!--
             <template>
               <h4 class="mb-4">Result:</h4>
               <vue-csv-import
@@ -59,19 +59,18 @@
               
             </template>
             -->
-          </div>
-          <div
-            class="absolute z-40 inset-0 opacity-25 bg-black"
-            v-if="addCustomerModal"
-          ></div>
-          <AddCustomerModal v-model="addCustomerModal" />
-        </div>
-        <!--
+      </div>
+      <div
+        class="absolute z-40 inset-0 opacity-25 bg-black"
+        v-if="addCustomerModal"
+      ></div>
+      <AddCustomerModal v-model="addCustomerModal" />
+    </div>
+    <!--
       </div>
     </div>
   </div>
-  -->
-  </div>
+  --></div>
 </template>
 
 <script>
@@ -79,6 +78,8 @@
 
 // Use one of the templates for the VueCsvImport component and add data point to reflect
 import AddCustomerModal from "./AddCustomerModal";
+//import CsvUpload from "./CsvUpload";
+// import FastCsv from "fast-csv";
 //import VueCsvImport from "vue-csv-import";
 
 export default {
@@ -86,6 +87,7 @@ export default {
   props: ["customers", "communities"],
   components: {
     AddCustomerModal,
+    //CsvUpload,
     //VueCsvImport,
     //VueCsvToggleHeaders,
     // VueCsvInput,

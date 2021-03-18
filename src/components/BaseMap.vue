@@ -15,6 +15,7 @@ export default {
     "propertyMgtChecked",
     "connectChecked",
     "iotChecked",
+    "selectedCustomerId",
   ],
   data() {
     return {
@@ -22,18 +23,22 @@ export default {
       blue: [],
       accessToken:
         "pk.eyJ1IjoiYnJlbmRhbm0xMjM0IiwiYSI6ImNraGdpOHFrcDAzNmMzNHB0cWd5N3lybWgifQ.pbNyNcQG6kNyESAo20P6nQ",
+      productsChecked: {
+        digitalHuman: "#35c4e7",
+        propertyMgt: "#ff6f48",
+        websites: "#b383ff",
+        connect: "#3bd4ae",
+        iot: "#94c127",
+      },
       // map: null,
     };
   },
 
   created() {
     setTimeout(this.addMarkers, 2000);
-    // this.locations.forEach(location => new mapboxgl.Marker()
-    //   .setLngLat([location.lng, location.lat])
-    //   .addTo(map));
   },
   methods: {
-    addMarkers() {
+    addMarkers(selectedCustomer) {
       console.log("trying to add");
       mapboxgl.accessToken = this.accessToken;
       var places = {
@@ -41,8 +46,6 @@ export default {
         features: [],
       };
 
-      // Encountering wierd bug where it works until i refresh it. maybe becasue function never stops running?
-      // I think the issues is that this for-loop is not being excuted and thus data is not being added to the geojson. Could it have to do with that warming in the console?
       this.locations.forEach((location) => {
         places.features.push({
           type: "Feature",
@@ -52,13 +55,13 @@ export default {
             checkbox: location[3],
             id: location[4],
             owner: location[5],
+            name: location[6],
           },
           geometry: {
             type: "Point",
             coordinates: location[0],
           },
         });
-        console.log("for-loop ran" + places.features);
       });
 
       var map = new mapboxgl.Map({
@@ -67,24 +70,17 @@ export default {
         center: [-95, 37],
         zoom: 3.7,
       });
-      console.log(places);
 
       map.on("load", function () {
         map.addSource("places", {
           type: "geojson",
           data: places,
         });
+
         places.features.forEach(function (feature) {
           var color = feature.properties["color"];
           var offset = feature.properties["offset"];
-          //var owner = feature.properties["owner"];
-
-          //layerID = "poi-" + color + owner; would create the right amount of layers
-          // add all layers to an array?
-
           var layerID = "poi-" + color;
-          //var ownerLayer = "poi" + owner;
-          // var checkBox = feature.properties["checkbox"];
           var checkboxId = feature.properties["id"];
 
           // Add a layer for this symbol type if it hasn't been added already.
@@ -107,9 +103,14 @@ export default {
                 "circle-translate": offset,
               },
             });
+            if (selectedCustomer != "all") {
+              map.setFilter("poi-" + color, [
+                "all",
+                ["==", ["get", "owner"], selectedCustomer],
+                ["==", ["get", "color"], color],
+              ]);
+            }
           }
-          // need to find a way to only render pins if their layer is checked and their owner is checked. Can I iterate through points in a layer
-          // everytime anything is changed (checkbox / customer selection), run a for loop through all the layers and hide the ones whoses colors arent one of the select colors and whose customers don't match the present customer
           let box = document.getElementById(checkboxId);
           box.addEventListener("click", function (e) {
             console.log("changed");
@@ -119,46 +120,79 @@ export default {
               e.target.checked ? "visible" : "none"
             );
           });
+
+          map.on("mouseenter", layerID, function (e) {
+            var coordinates = e.features[0].geometry.coordinates.slice();
+            var content =
+              "<strong>" +
+              e.features[0].properties.name +
+              "</strong><p>" +
+              e.features[0].properties.owner +
+              "</p>";
+
+            // Ensure that if the map is zoomed out such that multiple
+            // copies of the feature are visible, the popup appears
+            // over the copy being pointed to.
+            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+              coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+            }
+
+            let popup = new mapboxgl.Popup()
+              .setLngLat(coordinates)
+              .setHTML(content)
+              .addTo(map);
+            map.on("mouseleave", layerID, function () {
+              map.getCanvas().style.cursor = "";
+              popup.remove();
+            });
+          });
         });
+
+        // pop up not working
+
+        // var popup = new mapboxgl.Popup({
+        //   closeButton: false,
+        //   closeOnClick: false,
+        // });
+
+        // map.on("mouseenter", "places", function (e) {
+        //   console.log("mouse");
+        //   // Change the cursor style as a UI indicator.
+        //   map.getCanvas().style.cursor = "pointer";
+
+        //   var coordinates = e.features[0].geometry.coordinates.slice();
+        //   var description = e.features[0].properties.owner;
+
+        //   // Ensure that if the map is zoomed out such that multiple
+        //   // copies of the feature are visible, the popup appears
+        //   // over the copy being pointed to.
+        //   while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        //     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        //   }
+
+        //   // Populate the popup and set its coordinates
+        //   // based on the feature found.
+        //   popup.setLngLat(coordinates).setHTML(description).addTo(map);
+        // });
+
+        // map.on("mouseleave", "places", function () {
+        //   map.getCanvas().style.cursor = "";
+        //   popup.remove();
+        // });
       });
-
-      // geojson.features.forEach((marker) => {
-      //   // create a HTML element for each feature
-      //   const el = document.createElement("div");
-      //   el.className = "Map__marker";
-
-      //   // make a marker for each feature and add to the map
-      //   new mapboxgl.Marker(el)
-      //     .setLngLat(marker.geometry.coordinates)
-      //     .addTo(map);
-      // });
     },
   },
 
-  // watch: {
-  //   locations: function (newVal) {
-  //     // watch it
-  //     newVal.forEach((location) => {
-  //       // var el = document.createElement("div");
-  //       // el.className = "marker";
-
-  //       // new mapboxgl.Marker(el)
-  //       //   .setLngLat([location[0][0], location[0][1]])
-  //       //   .addTo(this.map);
-  //       //   console.log(this);
-
-  //       new mapboxgl.Marker({
-  //         color: location[1],
-  //         offset: [location[2], 0],
-  //       })
-  //         .setLngLat([location[0][0], location[0][1]])
-  //         .addTo(this.map);
-  //       //this.yellow.push(marker);
-  //       //console.log("hi" + this.yellow);
-  //     });
-  //     // want to add marker element to an array based on its color then pass this array over to app.vue so it can be hidden when box
-  //   },
-  // },
+  watch: {
+    selectedCustomerId: function (newVal) {
+      let checkboxes = document.getElementsByName("checkbox");
+      checkboxes.forEach(function (checkbox) {
+        checkbox.checked = true;
+      });
+      console.log("hi" + checkboxes);
+      this.addMarkers(newVal);
+    },
+  },
 };
 </script>
 
@@ -176,5 +210,9 @@ export default {
   border-radius: 50%;
   cursor: pointer;
   padding: 0;
+}
+.mapboxgl-popup {
+  max-width: 400px;
+  font: 12px/20px "Helvetica Neue", Arial, Helvetica, sans-serif;
 }
 </style>

@@ -58,7 +58,7 @@
                       <td>
                         <button
                           class="hover:bg-gray-100 rounded-full p-1 pl-2 pr-2 focus:outline-none"
-                          @click="showOptionsID = customer.id"
+                          @click="(showOptionsID = customer.id), (getCustomer(showOptionsID))"
                         >
                           <span class="sr-only">options</span>
                           <svg
@@ -81,7 +81,7 @@
                         >
                           <button
                             id="edit"
-                            @click="showOptionsID = ''"
+                            @click="(editModal = !editModal), (showOptionsID = '')"
                             class="w-full block bg-white text-sm font-bold text-black border p-2 pt-3 rounded-t-lg"
                           >
                             EDIT
@@ -141,6 +141,11 @@
         </div>
       </div>
     </div>
+    <div
+        class="absolute z-40 inset-0 opacity-25 bg-black"
+        v-if="editModal"
+      ></div>
+      <EditCustomerModal v-model="editModal" :customerToEdit="this.customerClickedOn"/>
   </div>
 </template>
 
@@ -149,15 +154,17 @@ import axios from "axios";
 import CommunityTable from "./CommunityTable";
 import CustomerPage from "./CustomerPage";
 import vClickOutside from "v-click-outside";
+import EditCustomerModal from "./EditCustomerModal";
 
 export default {
-  components: { CommunityTable, CustomerPage },
+  components: { CommunityTable, CustomerPage, EditCustomerModal },
   props: ["customers"],
   data() {
     return {
       showCommunities: false,
       customerClickedOn: "",
       showOptionsID: "",
+      editModal: false,
     };
   },
   directives: {
@@ -196,8 +203,9 @@ export default {
         customerClickedOn = id;
       }
     },
-    getCustomer(customerId) {
-      axios
+    async getCustomer(customerId) {
+      console.log("getting customer" + customerId)
+      await axios
         .get("http://localhost:3000/api/customer/" + customerId)
         .then((res) => {
           this.customerClickedOn = res.data;

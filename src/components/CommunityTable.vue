@@ -97,8 +97,8 @@ th {
   padding-right: 100px;
 }
 td {
-  padding-right: 100px;
-  min-width: 40px;
+  padding-right: 15px;
+  min-width: 200px;
   padding-top: 15px;
   padding-bottom: 15px;
   padding-left: 0px;

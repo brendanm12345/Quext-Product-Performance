@@ -11,6 +11,7 @@
     "@mapbox/mapbox-gl-geocoder": "^4.7.0",
     "axios": "^0.21.1",
     "core-js": "^3.9.1",
+    "fast-csv": "^4.3.6",
     "mapbox-gl": "^0.53.1",
     "mapbox-gl-vue": "^2.0.4",
     "tailwindcss": "^1.9.6",
@@ -19,6 +20,7 @@
     "vue-csv-import": "github:jgile/vue-csv-import#vue2",
     "vue-mapbox": "^0.4.1",
     "vue-router": "^3.5.1",
+    "vue-upload-component": "^2.8.22",
     "vuetify": "^2.4.5",
     "vuex": "^3.6.2"
   },

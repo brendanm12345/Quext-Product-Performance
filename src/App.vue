@@ -1,6 +1,10 @@
 <template>
   <div id="app">
-    <CustomerTable :customers="this.customers" :communities="this.communities" v-if="showCustomerPage == true"/>
+    <CustomerTable
+      :customers="this.customers"
+      :communities="this.communities"
+      v-if="showCustomerPage == true"
+    />
     <div class="flex">
       <div
         id="nav"
@@ -14,7 +18,7 @@
           <button
             class="bg-white rounded-sm pt-1 pl-3 pr-3 pb-1 hover:bg-gray-100 focus:outline-none"
             @click="showCustomerPage = false"
-            :class="{ active: showCustomerPage == false } "
+            :class="{ active: showCustomerPage == false }"
           >
             MAP
           </button>
@@ -29,51 +33,84 @@
       </div>
     </div>
     <div class="flex flex-col pt-2 pl-2">
-      <div class="bg-gray-100 bg-opacity-75 w-40 z-10 p-4 rounded-lg shadow-sm">
+      <div
+        class="bg-gray-100 bg-opacity-75 w-48 filterHeight z-10 p-4 rounded-lg shadow-sm"
+      >
         <div class="text-xl font-semibold">Filters</div>
-        <div>
-          <input
-            type="checkbox"
-            id="digitalHuman"
-            class="checkbox"
-            v-model="digitalHumanChecked"
-            checked
-          />
-          <label for="digitalHuman"> Digital Human</label><br />
+        <div id="product filters">
+          <div class="text-sm pt-1 pb-2 font-bold">PRODUCTS</div>
+          <div>
+            <input
+              type="checkbox"
+              name="checkbox"
+              id="digitalHuman"
+              class="checkbox"
+              v-model="digitalHumanChecked"
+              checked
+            />
+            <label for="digitalHuman"> Digital Human</label><br />
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              name="checkbox"
+              id="websites"
+              v-model="websitesChecked"
+              checked
+            />
+            <label for="websites"> Wesbites</label><br />
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              name="checkbox"
+              id="propertyMgt"
+              v-model="propertyMgtChecked"
+              checked
+            />
+            <label for="propertyMgt"> Property Mgt.</label><br />
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              name="checkbox"
+              id="connect"
+              v-model="connectChecked"
+              checked
+            />
+            <label for="connect"> Connect</label><br />
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              name="checkbox"
+              id="iot"
+              v-model="iotChecked"
+              checked
+            />
+            <label for="iot"> IoT</label><br />
+          </div>
         </div>
-        <div>
-          <input
-            type="checkbox"
-            id="websites"
-            v-model="websitesChecked"
-            checked
-          />
-          <label for="websites"> Wesbites</label><br />
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            id="propertyMgt"
-            v-model="propertyMgtChecked"
-            checked
-          />
-          <label for="propertyMgt"> Property Mgt.</label><br />
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            id="connect"
-            v-model="connectChecked"
-            checked
-          />
-          <label for="connect"> Connect</label><br />
-        </div>
-        <div>
-          <input type="checkbox" id="iot" v-model="iotChecked" checked />
-          <label for="iot"> IoT</label><br />
+        <div class="text-sm pt-1 pb-2 font-bold">CUSTOMERS</div>
+        <div class="h-32 overflow-y-auto flex-nowrap" id="customer filters">
+          <button class="text-left overflow-x-auto" @click="selectedCustomerId = all">
+            ALL
+          </button>
+          <ul
+            class="flex"
+            v-for="customer in this.customers"
+            :key="customer.id"
+          >
+            <button type="radio"
+              :id="customer.name"
+              class="text-left overflow-x-auto"
+              @click="selectedCustomerId = customer.name"
+            >
+              {{ customer.name }}
+            </button>
+          </ul>
         </div>
       </div>
-      
     </div>
     <BaseMap
       :locations="this.locations"
@@ -82,6 +119,7 @@
       :propertyMgtChecked="this.propertyMgtChecked"
       :connectChecked="this.connectChecked"
       :iotChecked="this.iotChecked"
+      :selectedCustomerId="this.selectedCustomerId"
     />
     <div
       v-if="communitiesModal == true"
@@ -122,6 +160,8 @@ export default {
       communities: [],
       customerAddresses: [],
       communityAddresses: [],
+      selectedCustomerId: "all",
+      test: false,
     };
   },
 
@@ -135,21 +175,13 @@ export default {
     makeAddresses() {
       this.customers.forEach((element) => {
         const addressString =
-          element.address +
-          ", " +
-          element.city +
-          ", " +
-          element.state;
+          element.address + ", " + element.city + ", " + element.state;
         const addressAndColor = [addressString, element.name];
         console.log(addressAndColor);
         this.customerAddresses.push(addressAndColor);
         element.communities.forEach((community) => {
           const addressString =
-            community.address +
-            ", " +
-            community.city +
-            ", " +
-            community.state;
+            community.address + ", " + community.city + ", " + community.state;
           if (community.digital_human == true) {
             this.communityAddresses.push([
               addressString,
@@ -158,6 +190,7 @@ export default {
               this.digitalHumanChecked,
               "digitalHuman",
               element.name,
+              community.name
             ]);
           }
           if (community.core_pms == true) {
@@ -168,6 +201,7 @@ export default {
               this.propertyMgtChecked,
               "propertyMgt",
               element.name,
+              community.name,
             ]);
           }
           if (community.websites == true) {
@@ -178,6 +212,7 @@ export default {
               this.websitesChecked,
               "websites",
               element.name,
+              community.name,
             ]);
           }
           if (community.connect == true) {
@@ -188,6 +223,7 @@ export default {
               this.connectChecked,
               "connect",
               element.name,
+              community.name,
             ]);
           }
           if (community.iot == true) {
@@ -198,6 +234,7 @@ export default {
               this.iotChecked,
               "iot",
               element.name,
+              community.name,
             ]);
           }
         });
@@ -224,6 +261,7 @@ export default {
               address[3],
               address[4],
               address[5],
+              address[6],
             ]);
           });
       });
@@ -267,7 +305,7 @@ export default {
         .then((res) => {
           this.communities = res.data;
         })
-        .catch((error) => console.log(error))
+        .catch((error) => console.log(error));
       //this.geocode(this.communityAddresses);
     },
   },
@@ -332,5 +370,9 @@ input[type="checkbox"]:checked + label:after {
 
 input[type="checkbox"]:focus + label::before {
   outline: rgb(59, 153, 252) auto 5px;
+}
+
+.filterHeight {
+  height: 380px;
 }
 </style>

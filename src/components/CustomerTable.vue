@@ -34,7 +34,43 @@
                     <th id="nonbutton" class="font-medium">TOTAL UNITS</th>
                     <th id="nonbutton" class="font-medium">COMMUNITIES</th>
                     <th id="nonbutton" class="font-medium">LOCATION</th>
-                    <th id="button"></th>
+                    <th id="button">
+                      <button
+                        class="hover:bg-gray-100 rounded-full p-1 pl-2 pr-2 focus:outline-none"
+                        @click="confirmDelete = !confirmDelete"
+                      >
+                        <span class="sr-only">delete all</span>
+                        <svg
+                          width="22"
+                          height="22"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
+                        </svg>
+                      </button>
+                      <div
+                        v-if="confirmDelete"
+                        id="confirm delete"
+                        class="z-60 absolute shadow-lg rounded-lg m-1 float-right"
+                        v-click-outside="hide"
+                      >
+                        <button
+                          id="delete all button"
+                          @click="(deleteAllCustomers()), (confirmDelete = false)"
+                          class="w-full block bg-white text-sm font-bold text-red-600 border pl-3 pr-3 p-2 pt-3 rounded-lg focus:outline-none"
+                        >
+                          DELETE ALL
+                        </button>
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -43,7 +79,7 @@
                       <td
                         id="nonbutton"
                         name="name"
-                        class="font-bold customerRow"
+                        class="font-bold minWidthName customerRow"
                         @click="
                           [(showCommunities = true), getCustomer(customer.id)]
                         "
@@ -58,7 +94,10 @@
                       <td>
                         <button
                           class="hover:bg-gray-100 rounded-full p-1 pl-2 pr-2 focus:outline-none"
-                          @click="(showOptionsID = customer.id), (getCustomer(showOptionsID))"
+                          @click="
+                            (showOptionsID = customer.id),
+                              getCustomer(showOptionsID)
+                          "
                         >
                           <span class="sr-only">options</span>
                           <svg
@@ -81,7 +120,9 @@
                         >
                           <button
                             id="edit"
-                            @click="(editModal = !editModal), (showOptionsID = '')"
+                            @click="
+                              (editModal = !editModal), (showOptionsID = '')
+                            "
                             class="w-full block bg-white text-sm font-bold text-black border p-2 pt-3 rounded-t-lg"
                           >
                             EDIT
@@ -142,10 +183,13 @@
       </div>
     </div>
     <div
-        class="absolute z-40 inset-0 opacity-25 bg-black"
-        v-if="editModal"
-      ></div>
-      <EditCustomerModal v-model="editModal" :customerToEdit="this.customerClickedOn"/>
+      class="absolute z-40 inset-0 opacity-25 bg-black"
+      v-if="editModal"
+    ></div>
+    <EditCustomerModal
+      v-model="editModal"
+      :customerToEdit="this.customerClickedOn"
+    />
   </div>
 </template>
 
@@ -161,6 +205,7 @@ export default {
   props: ["customers"],
   data() {
     return {
+      confirmDelete: false,
       showCommunities: false,
       customerClickedOn: "",
       showOptionsID: "",
@@ -171,8 +216,25 @@ export default {
     clickOutside: vClickOutside.directive,
   },
   methods: {
+    async deleteAllCustomers() {
+      await this.customers.forEach((customer) => {
+        axios
+          .delete("http://localhost:3000/api/customer/" + customer.id)
+          .then((Response) => {
+            console.log(Response);
+          })
+          .catch((Error) => {
+            console.log(Error);
+          });
+      });
+      this.getCustomers();
+    },
     hide() {
+      this.confirmDelete = false;
       this.showOptionsID = "";
+    },
+    reload() {
+      this.$forceUpdate();
     },
     checkProducts(community) {
       var hasProducts = [];
@@ -193,18 +255,8 @@ export default {
       }
       return hasProducts;
     },
-    toggleId(customerClickedOn, id) {
-      console.log("trying to toggle");
-      if (customerClickedOn == id) {
-        console.log("inside if");
-        customerClickedOn = null;
-      } else {
-        console.log("inside else");
-        customerClickedOn = id;
-      }
-    },
     async getCustomer(customerId) {
-      console.log("getting customer" + customerId)
+      console.log("getting customer" + customerId);
       await axios
         .get("http://localhost:3000/api/customer/" + customerId)
         .then((res) => {
@@ -235,6 +287,14 @@ export default {
       this.customers = res.data;
     },
   },
+  watch: {
+    editModal: function (newVal) {
+      if (newVal == false) {
+        console.log("inside if");
+        this.reload();
+      }
+    },
+  },
 };
 </script>
 
@@ -250,10 +310,14 @@ th,
 }
 #nonbutton {
   padding-right: 15px;
-  min-width: 300px;
+  min-width: 250px;
   padding-top: 15px;
   padding-bottom: 15px;
   padding-left: 0px;
+}
+
+.minWidthName {
+  min-width: 600px;
 }
 
 th {
@@ -263,9 +327,10 @@ td {
   //font-weight: bold;
   border-top: 2px solid #e5e7eb;
   border-collapse: collapse;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 .customerRow:hover {
-  font-weight: 800;
+  font-weight: 750;
 }
 .topMargin {
   margin-top: 142px;

@@ -7,7 +7,7 @@
       <div class="bg-white w-full rounded-lg shadow-2xl flex flex-col p-8">
         <div id="page 1" v-if="showNext == false">
           <div class="w-full inline-flex justify-between items-center pb-4">
-            <div class="text-3xl font-bold text-left">Add Community</div>
+            <div class="text-3xl font-bold text-left">Edit Community</div>
             <button @click="closeModal()" class="focus:outline-none">
               <span class="sr-only">back</span>
               <svg
@@ -166,10 +166,13 @@
 import axios from "axios";
 
 export default {
-  name: "AddCommunityModal",
+  name: "EditCustomerModal",
   props: {
     value: {
       required: true,
+    },
+    community: {
+      type: Object,
     },
     ownerId: {
       type: String,
@@ -211,23 +214,20 @@ export default {
     submitCommunityForm() {
       console.log("Submitted community");
       axios
-        .post(
-          "http://localhost:3000/api/communities/",
-          {
-            name: this.name,
-            units: this.units,
-            customer_id: this.ownerId,
-            address: this.streetAddress,
-            city: this.city,
-            state: this.state,
-            country: this.country,
-            digital_human: this.selectDigitalHuman,
-            core_pms: this.selectPropertyMgt,
-            websites: this.selectWebsites,
-            connect: this.selectConnect,
-            iot: this.selectIot,
-          }
-        )
+        .put("http://localhost:3000/api/communities/" + this.community.id, {
+          name: this.name,
+          units: this.units,
+          customer_id: this.ownerId,
+          address: this.streetAddress,
+          city: this.city,
+          state: this.state,
+          country: this.country,
+          digital_human: this.selectDigitalHuman,
+          core_pms: this.selectPropertyMgt,
+          websites: this.selectWebsites,
+          connect: this.selectConnect,
+          iot: this.selectIot,
+        })
         .then((Response) => {
           console.log(Response);
           this.presentCustomerId = Response.data["id"];
@@ -260,7 +260,7 @@ export default {
     community: function (newVal) {
       console.log(newVal.name);
       this.name = newVal.name;
-      this.units = newVal.units
+      this.units = newVal.units;
       this.streetAddress = newVal.address;
       this.city = newVal.city;
       this.state = newVal.state;

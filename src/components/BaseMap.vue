@@ -66,7 +66,7 @@ export default {
 
       var map = new mapboxgl.Map({
         container: "mapContainer",
-        style: "mapbox://styles/mapbox/light-v10",
+        style: "mapbox://styles/brendanm1234/ckmf7s74mawq417lemga2ka6n",
         center: [-95, 37],
         zoom: 3.7,
       });

@@ -16,7 +16,7 @@
     </div>
 
     <div id="customers data" v-if="customersView == true" class="w-min">
-      <div id="searchbar + buttons" class="mt-3 inline-flex">
+      <div id="searchbar + buttons" class="mt-3 inline-flex items-center">
         <button
           class="addButton hover:underline mr-4"
           @click="addCustomerModal = !addCustomerModal"
@@ -25,40 +25,10 @@
         </button>
 
         <!--
-            <template>
-              <h4 class="mb-4">Result:</h4>
-              <vue-csv-import
-                autoMatchFields = true
-                url="http://localhost:3003/service/auth/v1/customers/test"
-                v-model="csv"
-                :map-fields="['columnA', 'columnB']"
-              ></vue-csv-import>
-              <div class="mt-2">
-                {{ csv }}
-              </div>
-              
-              <vue-csv-import
-                url="http://localhost:3000/api/customer"
-                :map-fields="['name', 'units', 'address', 'city']"
-              >
-                <vue-csv-map></vue-csv-map>
-              </vue-csv-import>
-
-             
-              <vue-csv-import
-                url="http://localhost:3000/api/customer"
-                v-model="csv"
-                :map-fields="['name', 'units', 'field', 'names']"
-              >
-                <vue-csv-toggle-headers></vue-csv-toggle-headers>
-                <vue-csv-errors></vue-csv-errors>
-                <vue-csv-input name="file">upload</vue-csv-input>
-                <vue-csv-map></vue-csv-map>
-                <vue-csv-submit url="http://localhost:3000/api/customer"></vue-csv-submit>
-              </vue-csv-import>
-              
-            </template>
-            -->
+        <textarea v-model="text" rows="10"></textarea>
+        -->
+        <CsvUpload :buttonText="this.buttonText"  @load="(text = $event) (this.buttonText = 'Replace')" />
+        <button class="submitButton bg-blue-500 text-white text-sm font-bold ml-3 pl-2 pr-2 pt-1 pb-1 hover:bg-blue-400 rounded-md" v-if="text != ''" @click="mapCustomerCsv">SUBMIT</button>
       </div>
       <div
         class="absolute z-40 inset-0 opacity-25 bg-black"
@@ -66,11 +36,7 @@
       ></div>
       <AddCustomerModal v-model="addCustomerModal" />
     </div>
-    <!--
-      </div>
-    </div>
   </div>
-  --></div>
 </template>
 
 <script>
@@ -78,31 +44,116 @@
 
 // Use one of the templates for the VueCsvImport component and add data point to reflect
 import AddCustomerModal from "./AddCustomerModal";
-//import CsvUpload from "./CsvUpload";
-// import FastCsv from "fast-csv";
-//import VueCsvImport from "vue-csv-import";
+import CsvUpload from "./CsvUpload";
+import axios from "axios";
 
 export default {
   name: "CustomerPage",
   props: ["customers", "communities"],
   components: {
     AddCustomerModal,
-    //CsvUpload,
-    //VueCsvImport,
-    //VueCsvToggleHeaders,
-    // VueCsvInput,
-    //VueCsvErrors,
-    //VueCsvMap,
+    CsvUpload,
   },
 
   data() {
     return {
+      buttonText: "Upload CSV File",
       customersView: true,
       addCommunityModal: false,
       addCustomerModal: false,
       csv: null,
+      text: "",
+      postedCustomerId: "",
+      expectedCommunityHeaders: [
+        "name",
+        "units",
+        "address",
+        "city",
+        "state",
+        "country",
+        "digital_human",
+        "core_pms",
+        "websites",
+        "connect",
+        "iot\r",
+      ],
+      expectedCustomerHeaders: [
+        "name",
+        "address",
+        "city",
+        "state",
+        "country\r",
+      ],
     };
   },
+  methods: {
+    async mapCustomerCsv() {
+      let rows = this.text.split("\n");
+      let customer = rows[0];
+      rows.shift();
+      let splitCustomer = customer.split(",");
+      await axios
+        .post("http://localhost:3000/api/customer", {
+          name: splitCustomer[0],
+          address: splitCustomer[1],
+          city: splitCustomer[2],
+          state: splitCustomer[3],
+          country: splitCustomer[4],
+        })
+        .then((Response) => {
+          console.log(Response);
+          this.postedCustomerId = Response.data["id"];
+        })
+        .catch((Error) => {
+          console.log(Error);
+        });
+      let headers = rows[0].split(",");
+      rows.shift();
+      console.log(JSON.stringify(headers));
+      console.log(JSON.stringify(this.expectedCommunityHeaders));
+      if (
+        JSON.stringify(headers) ===
+        JSON.stringify(this.expectedCommunityHeaders)
+      ) {
+        console.log("inside if")
+        rows.forEach((row) => {
+          let properties = row.split(",");
+          console.log(properties)
+          let units = parseInt(properties[1]);
+          console.log(units);
+          let id = parseInt(this.postedCustomerId)
+          let dhTrue = properties[6].toLowerCase() == "true";
+          let cpTrue = properties[7].toLowerCase() == "true";
+          let wTrue = properties[8].toLowerCase() == "true";
+          let cTrue = properties[9].toLowerCase() == "true";
+          let iTrue = properties[10].toLowerCase() == "true";
+          axios.post("http://localhost:3000/api/communities", {
+            name: properties[0],
+            units: units,
+            customer_id: id,
+            address: properties[2],
+            city: properties[3],
+            state: properties[4],
+            country: properties[5],
+            digital_human: dhTrue,
+            core_pms: cpTrue,
+            websites: wTrue,
+            connect: cTrue,
+            iot: iTrue,
+          });
+        });
+      } else {
+        console.log("ERROR: files headers do not match expected headers");
+      }
+    },
+  },
+  watch: {
+    text: function(newVal) {
+      if (newVal != '') {
+        this.buttonText = "Replace File"
+      }
+    }
+  }
 };
 </script>
 
@@ -116,5 +167,9 @@ button.addButton {
   padding-left: 15px;
   padding-top: 5px;
   padding-bottom: 5px;
+}
+.submitButton {
+  padding-top: 7px;
+  padding-bottom: 7px;
 }
 </style>

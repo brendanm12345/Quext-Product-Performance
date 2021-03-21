@@ -286,9 +286,9 @@
                 class="rounded-full bg-gray-200 pt-2 pb-2 pr-3 pl-3 mr-3 text-sm font-semibold items-center"
               >
                 {{ community.name }}
-                <!--
                 
                 <button
+                  id="community.city"
                   @click="removeCommunity(community.name)"
                   class="focus:outline-none items-center mt-4"
                 >
@@ -307,7 +307,6 @@
                     />
                   </svg>
                 </button>
-                -->
               </span>
             </div>
             <div class="text-white flex justify-end">

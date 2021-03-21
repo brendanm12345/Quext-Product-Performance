@@ -12,7 +12,7 @@
       >
         <div class="flex items-center align-center">
           <img src="./assets/quextLogo.png" class="h-16 pl-4 pt-3 pb-3" />
-          <div class="text-2xl font-light pl-1">Product Performance</div>
+          <div class="title font-thin pl-1 mb-2">Product Performance</div>
         </div>
         <div class="pt-2 pb-2">
           <button
@@ -37,7 +37,7 @@
         class="bg-gray-100 bg-opacity-75 w-48 filterHeight z-10 p-4 rounded-lg shadow-sm"
       >
         <div class="text-xl font-semibold">Filters</div>
-        <div id="product filters">
+        <div id="product filters" class="pb-2">
           <div class="text-sm pt-1 pb-2 font-bold">PRODUCTS</div>
           <div>
             <input
@@ -370,6 +370,10 @@ input[type="checkbox"]:checked + label:after {
 
 input[type="checkbox"]:focus + label::before {
   outline: rgb(59, 153, 252) auto 5px;
+}
+
+.title {
+  font-size: 25px;
 }
 
 .filterHeight {

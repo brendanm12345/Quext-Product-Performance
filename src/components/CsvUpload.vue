@@ -1,45 +1,44 @@
 <template>
   <div>
-    <h4 class="mb-4">Result:</h4>
-    <vue-csv-import
-      autoMatchFields="true"
-      url="http://localhost:3003/service/auth/v1/customers/test"
-      v-model="csv"
-      :map-fields="['columnA', 'columnB']"
-    ></vue-csv-import>
-    <div class="mt-2">
-      {{ csv }}
+    <div>
+      <input type="file" id="files" class="hidden" value="Upload a CSV File" accept="csv" @change="previewFiles" multiple>
+      <label class="addButton hover:underline" for="files">{{ buttonText }}</label>
     </div>
-
-    <vue-csv-import
-      url="http://localhost:3000/api/customer"
-      :map-fields="['name', 'units', 'address', 'city']"
-    >
-      <vue-csv-map></vue-csv-map>
-    </vue-csv-import>
-
-    <vue-csv-import
-      url="http://localhost:3000/api/customer"
-      v-model="csv"
-      :map-fields="['name', 'units', 'field', 'names']"
-    >
-      <vue-csv-toggle-headers></vue-csv-toggle-headers>
-      <vue-csv-errors></vue-csv-errors>
-      <vue-csv-input name="file">upload</vue-csv-input>
-      <vue-csv-map></vue-csv-map>
-      <vue-csv-submit url="http://localhost:3000/api/customer"></vue-csv-submit>
-    </vue-csv-import>
   </div>
-</template>Î
+</template>
 
 <script>
 //import VueCsvImport from "vue-csv-import";
 export default {
+  props: [ "buttonText" ],
   components: {
     //VueCsvImport,
+  },
+  data() {
+    return {};
+  },
+  methods: {
+    previewFiles(event) {
+      const file = event.target.files[0];
+      //const file2 = event.target.files[1];
+      const reader = new FileReader();
+      reader.onload = event => this.$emit("load", event.target.result);
+      reader.readAsText(file);
+      //reader.readAsText(file2);
+    }
   },
 };
 </script>
 
 <style lang="scss" scoped>
+.addButton {
+  border-style: solid;
+  border-width: 1px;
+  border-color: black;
+  border-radius: 7px;
+  padding-right: 15px;
+  padding-left: 15px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
 </style>

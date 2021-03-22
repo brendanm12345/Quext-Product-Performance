@@ -27,6 +27,7 @@ export default {
     "connectChecked",
     "iotChecked",
     "selectedCustomerId",
+    "showCustomerPage",
   ],
   data() {
     return {
@@ -41,7 +42,7 @@ export default {
         connect: "#3bd4ae",
         iot: "#94c127",
       },
-      featuresVisible: '',
+      featuresVisible: "",
       // map: null,
     };
   },
@@ -84,6 +85,7 @@ export default {
       });
 
       map.on("load", function () {
+        
         map.addSource("places", {
           type: "geojson",
           data: places,
@@ -97,6 +99,7 @@ export default {
 
           // Add a layer for this symbol type if it hasn't been added already.
           if (!map.getLayer(layerID)) {
+            map.removeLayer(layerID)
             map.addLayer({
               id: layerID,
               type: "circle",
@@ -131,7 +134,7 @@ export default {
               "visibility",
               e.target.checked ? "visible" : "none"
             );
-            console.log(e)
+            console.log(e);
           });
           //this.featuresVisible = map.queryRenderedFeatures({layers: ['#ff6f48']}).length;
 
@@ -173,6 +176,11 @@ export default {
       });
       console.log("hi" + checkboxes);
       this.addMarkers(newVal);
+    },
+    showCustomerPage: function (newVal) {
+      if (newVal == false) {
+        location.reload();
+      }
     },
   },
 };

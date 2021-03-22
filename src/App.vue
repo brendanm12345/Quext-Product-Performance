@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <CustomerTable
+      @get-customers="run()"
       :customers="this.customers"
       :communities="this.communities"
       v-if="showCustomerPage == true"
@@ -11,8 +12,8 @@
         class="bg-white w-full shadow-md z-30 h-15 flex items-center align-center justify-between"
       >
         <div class="flex items-center align-center">
-          <img src="./assets/quextLogo.png" class="h-16 pl-4 pt-3 pb-3" />
-          <div class="title font-thin pl-1 mb-2">Product Performance</div>
+          <img src="./assets/QuextLogo_RGB BLACK.png" class="h-16 pl-4 pt-3 pb-3" />
+          <div class="title font-medium left mb-2">product performance</div>
         </div>
         <div class="pt-2 pb-2">
           <button
@@ -96,12 +97,14 @@
           <button
             id="all"
             class="bold text-left overflow-x-auto focus:outline-none"
-            @click="(unBold(selectedCustomerId)), (selectedCustomerId = 'all'), bold()"
+            @click="
+              unBold(selectedCustomerId), (selectedCustomerId = 'all'), bold()
+            "
           >
             ALL
           </button>
           <ul
-            class="flex"
+            class="flex focus:outline-none"
             v-for="customer in this.customers"
             :key="customer.id"
           >
@@ -110,7 +113,11 @@
               name="customerFilter"
               :id="customer.name"
               class="text-left overflow-x-auto focus:outline-none"
-              @click="(unBold(selectedCustomerId)), (selectedCustomerId = customer.name), bold()"
+              @click="
+                unBold(selectedCustomerId),
+                  (selectedCustomerId = customer.name),
+                  bold()
+              "
             >
               {{ customer.name }}
             </button>
@@ -145,6 +152,7 @@
     </div>
 
     <BaseMap
+      :showCustomerPage="this.showCustomerPage"
       :locations="this.locations"
       :digitalHumanChecked="this.digitalHumanChecked"
       :websitesChecked="this.websitesChecked"
@@ -193,15 +201,21 @@ export default {
   },
 
   methods: {
+    run() {
+      setTimeout(this.getCustomers, 100);
+      setTimeout(this.getCommunities, 100);
+    },
     unBold(id) {
       document.getElementById(id).classList.remove("bold");
       console.log(id);
       //document.getElementsByName("customerFilter").setAttribute( "class", "notBold" );
     },
-    
+
     bold() {
       //document.getElementsByName("customerFilter").setAttribute("class", "notBold")
-      document.getElementById(this.selectedCustomerId).setAttribute( "class", "bold" );
+      document
+        .getElementById(this.selectedCustomerId)
+        .setAttribute("class", "bold");
       console.log("ran bold");
     },
 
@@ -212,6 +226,8 @@ export default {
     // fills customer and community address arrays with address strings
     // TODO: this function needs to be able to fill the communityAddresses and customerAddresses with objects containing address string and color string. The color string will be black for customers and for communities will be determined by each product that is true the corresponding color will be associated with it. Probably no for loop and just five lines that pushes the object to the array if product is true
     makeAddresses() {
+      console.log("MAKING ADDRESSES");
+      this.units = 0;
       this.customers.forEach((element) => {
         const addressString =
           element.address + ", " + element.city + ", " + element.state;
@@ -330,23 +346,25 @@ export default {
     //   });
     //},
     async getCustomers() {
+      console.log("GETTING CUSTOMERS");
       await axios
         .get("http://localhost:3000/api/customer")
         .then((res) => {
           this.customers = res.data;
+          console.log(this.customers);
         })
-        .catch((error) => console.log(error))
-        .finally(() => this.makeAddresses());
-      //this.geocode(this.communityAddresses);
+        .catch((error) => console.log(error));
+      //.finally(() => this.makeAddresses());
+      this.makeAddresses();
     },
     async getCommunities() {
       await axios
         .get("http://localhost:3000/api/communities")
         .then((res) => {
           this.communities = res.data;
+          console.log(this.customers);
         })
         .catch((error) => console.log(error));
-      //this.geocode(this.communityAddresses);
     },
   },
   created() {
@@ -424,5 +442,9 @@ input[type="checkbox"]:focus + label::before {
 }
 .bold {
   font-weight: 700;
+}
+.left {
+  padding-left: 2px;
+  padding-bottom: 1px;
 }
 </style>

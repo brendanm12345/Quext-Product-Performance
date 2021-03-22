@@ -27,14 +27,26 @@
         <!--
         <textarea v-model="text" rows="10"></textarea>
         -->
-        <CsvUpload :buttonText="this.buttonText"  @load="(text = $event) (this.buttonText = 'Replace')" />
-        <button class="submitButton bg-blue-500 text-white text-sm font-bold ml-3 pl-2 pr-2 pt-1 pb-1 hover:bg-blue-400 rounded-md" v-if="text != ''" @click="mapCustomerCsv">SUBMIT</button>
+        <CsvUpload
+          :buttonText="this.buttonText"
+          @load="(text = $event)"
+        />
+        <button
+          class="submitButton bg-blue-500 text-white text-sm font-bold ml-3 pl-2 pr-2 pt-1 pb-1 hover:bg-blue-400 rounded-md"
+          v-if="text != ''"
+          @click="(mapCustomerCsv()), (text = '')"
+        >
+          SUBMIT
+        </button>
       </div>
       <div
         class="absolute z-40 inset-0 opacity-25 bg-black"
         v-if="addCustomerModal"
       ></div>
-      <AddCustomerModal v-model="addCustomerModal" />
+      <AddCustomerModal
+        v-model="addCustomerModal"
+        @get-customers="refreshCustomers()"
+      />
     </div>
   </div>
 </template>
@@ -87,6 +99,9 @@ export default {
     };
   },
   methods: {
+    refreshCustomers() {
+      this.$emit("get-customers");
+    },
     async mapCustomerCsv() {
       let rows = this.text.split("\n");
       let customer = rows[0];
@@ -115,13 +130,13 @@ export default {
         JSON.stringify(headers) ===
         JSON.stringify(this.expectedCommunityHeaders)
       ) {
-        console.log("inside if")
-        rows.forEach((row) => {
+        console.log("inside if");
+        await rows.forEach((row) => {
           let properties = row.split(",");
-          console.log(properties)
+          console.log(properties);
           let units = parseInt(properties[1]);
           console.log(units);
-          let id = parseInt(this.postedCustomerId)
+          let id = parseInt(this.postedCustomerId);
           let dhTrue = properties[6].toLowerCase() == "true";
           let cpTrue = properties[7].toLowerCase() == "true";
           let wTrue = properties[8].toLowerCase() == "true";
@@ -145,15 +160,18 @@ export default {
       } else {
         console.log("ERROR: files headers do not match expected headers");
       }
+      this.refreshCustomers();
     },
   },
   watch: {
-    text: function(newVal) {
-      if (newVal != '') {
-        this.buttonText = "Replace File"
+    text: function (newVal) {
+      if (newVal != "") {
+        this.buttonText = "Replace File";
+      } else {
+        this.buttonText = "Upload CSV File"
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

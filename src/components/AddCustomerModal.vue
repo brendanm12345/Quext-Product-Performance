@@ -275,14 +275,14 @@
                 </div>
               </div>
             </form>
-            <div id="added community pills" class="mt-4 mb-4">
-              <span
+            <div id="added community pills" class="flex flex-wrap mt-4 mb-4">
+              <div
                 v-for="community in communitiesToPost"
                 :key="community.id"
-                class="rounded-full bg-gray-200 pt-2 pb-2 pr-3 pl-3 mr-3 text-sm font-semibold"
+                class="rounded-full w-min bg-gray-200 pt-2 pb-2 pr-3 mr-3 pl-3 mb-3 text-sm font-semibold whitespace-normal"
               >
                 {{ community.name }}
-              </span>
+              </div>
             </div>
             <div class="text-white flex justify-end">
               <button
@@ -329,9 +329,9 @@ export default {
     };
   },
   methods: {
-    submitCustomerForm() {
+    async submitCustomerForm() {
       console.log("Submitted Customer");
-      axios
+      await axios
         .post("http://localhost:3000/api/customer", {
           name: this.name,
           address: this.streetAddress,
@@ -347,9 +347,6 @@ export default {
         .catch((Error) => {
           console.log(Error);
         });
-
-      // find a way to the the present customer Id into data and add ID to the communities
-
       this.name = "";
       this.streetAddress = "";
       this.city = "";
@@ -393,9 +390,9 @@ export default {
       this.selectConnect = false;
       this.selectIot = false;
     },
-    submitPage2() {
+    async submitPage2() {
       console.log("submit page 2");
-      this.communitiesToPost.forEach((community) => {
+      await this.communitiesToPost.forEach((community) => {
         console.log("iterated " + [community.name]);
         axios
           .post("http://localhost:3000/api/communities", {
@@ -430,13 +427,13 @@ export default {
         community.connect = null;
         community.iot = null;
       });
-
+      this.$emit("get-customers");
       //closing the modal
       this.$emit("input", !this.value);
     },
     closeModal() {
       this.$emit("input", !this.value);
-    }
+    },
   },
 };
 </script>

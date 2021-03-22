@@ -26,7 +26,7 @@
         <div class="align-center justify-between">
           <div id="data area" class="w-screen pl-24 pr-24 pt-32">
             <div v-if="showCommunities == false">
-              <CustomerPage />
+              <CustomerPage @get-customers="refreshCustomers()" />
               <table class="w-full">
                 <thead>
                   <tr class="text-gray-500 text-sm">
@@ -64,7 +64,7 @@
                       >
                         <button
                           id="delete all button"
-                          @click="(deleteAllCustomers()), (confirmDelete = false)"
+                          @click="deleteAllCustomers(), (confirmDelete = false)"
                           class="w-full block bg-white text-sm font-bold text-red-600 border pl-3 pr-3 p-2 pt-3 rounded-lg focus:outline-none"
                         >
                           DELETE ALL
@@ -130,7 +130,7 @@
                           <button
                             id="delete"
                             @click="
-                              deleteCustomer(customer.id), (showOptionsID = '')
+                              deleteCustomer(customer), (showOptionsID = '')
                             "
                             class="w-full block bg-white text-sm font-bold text-black border pt-2 pb-3 pr-4 pl-4 rounded-b-lg"
                           >
@@ -176,6 +176,7 @@
               <CommunityTable
                 :customerClickedOn="this.customerClickedOn"
                 :showCommunities="this.showCommunities"
+                @get-customers="refreshCustomers()"
               />
             </div>
           </div>
@@ -187,6 +188,7 @@
       v-if="editModal"
     ></div>
     <EditCustomerModal
+      @get-customers="refreshCustomers()"
       v-model="editModal"
       :customerToEdit="this.customerClickedOn"
     />
@@ -216,7 +218,22 @@ export default {
     clickOutside: vClickOutside.directive,
   },
   methods: {
+    refreshCustomers() {
+      this.$emit("get-customers");
+    },
     async deleteAllCustomers() {
+      await this.customers.forEach((customer) => {
+        customer.communities.forEach((community) => {
+          axios
+            .delete("http://localhost:3000/api/communities/" + community.id)
+            .then((Response) => {
+              console.log(Response);
+            })
+            .catch((Error) => {
+              console.log(Error);
+            });
+        });
+      });
       await this.customers.forEach((customer) => {
         axios
           .delete("http://localhost:3000/api/customer/" + customer.id)
@@ -227,14 +244,11 @@ export default {
             console.log(Error);
           });
       });
-      this.getCustomers();
+      this.refreshCustomers();
     },
     hide() {
       this.confirmDelete = false;
       this.showOptionsID = "";
-    },
-    reload() {
-      this.$forceUpdate();
     },
     checkProducts(community) {
       var hasProducts = [];
@@ -271,28 +285,31 @@ export default {
       });
       return sum;
     },
-    deleteCustomer(customerId) {
-      axios
-        .delete("http://localhost:3000/api/customer/" + customerId)
+    async deleteCustomer(customer) {
+      await customer.communities.forEach((community) => {
+        axios
+          .delete("http://localhost:3000/api/communities/" + community.id)
+          .then((Response) => {
+            console.log(Response);
+          })
+          .catch((Error) => {
+            console.log(Error);
+          });
+      });
+      await axios
+        .delete("http://localhost:3000/api/customer/" + customer.id)
         .then((Response) => {
           console.log(Response);
-          this.getCustomers();
         })
         .catch((Error) => {
           console.log(Error);
         });
+
+      this.refreshCustomers();
     },
     async getCustomers() {
       const res = await axios.get("http://localhost:3000/api/customer/");
       this.customers = res.data;
-    },
-  },
-  watch: {
-    editModal: function (newVal) {
-      if (newVal == false) {
-        console.log("inside if");
-        this.reload();
-      }
     },
   },
 };

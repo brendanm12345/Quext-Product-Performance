@@ -197,20 +197,11 @@ export default {
     };
   },
   methods: {
-    removeCommunity(communityId) {
-      this.existingCommunities = this.existingCommunities.filter(function (e) {
-        return (e.id = communityId);
-      });
-      console.log(this.existingCommunities);
-      this.communitiesToPost = this.communitiesToPost.filter(function (e) {
-        return (e.id = communityId);
-      });
-      console.log(this.communitiesToPost);
+    refreshCustomers() {
+      this.$emit("get-customers");
     },
-
-    submitCommunityForm() {
-      console.log("Submitted community");
-      axios
+    async submitCommunityForm() {
+      await axios
         .post(
           "http://localhost:3000/api/communities/",
           {
@@ -241,6 +232,8 @@ export default {
       this.city = "";
       this.state = "";
       this.country = "";
+
+      this.refreshCustomers();
     },
     async getCustomers() {
       await axios

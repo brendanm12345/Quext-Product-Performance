@@ -14,7 +14,11 @@
         class="absolute z-40 inset-0 opacity-25 bg-black"
         v-if="addCommunityModal"
       ></div>
-      <AddCommunityModal v-model="addCommunityModal" :ownerId="this.customerClickedOn.id" />
+      <AddCommunityModal
+        @get-customers="refreshCustomers()"
+        v-model="addCommunityModal"
+        :ownerId="this.customerClickedOn.id"
+      />
     </div>
 
     <table class="w-full">
@@ -102,6 +106,7 @@
       v-if="editModal"
     ></div>
     <EditCommunityModal
+      @get-customers="refreshCustomers()"
       v-model="editModal"
       :community="this.communityClickedOn"
       :ownerId="this.customerClickedOn.id"
@@ -131,6 +136,9 @@ export default {
     clickOutside: vClickOutside.directive,
   },
   methods: {
+    refreshCustomers() {
+      this.$emit("get-customers");
+    },
     hide() {
       this.showOptionsID = "";
     },
@@ -144,8 +152,8 @@ export default {
         })
         .catch((error) => console.log(error));
     },
-    deleteCommunity(communityId) {
-      axios
+    async deleteCommunity(communityId) {
+      await axios
         .delete("http://localhost:3000/api/communities/" + communityId)
         .then((Response) => {
           console.log(Response);
@@ -155,6 +163,7 @@ export default {
         .catch((Error) => {
           console.log(Error);
         });
+        this.refreshCustomers();
     },
     async getCustomerInfo(communityId) {
       console.log("trying to get" + communityId);

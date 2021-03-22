@@ -369,9 +369,9 @@ export default {
       console.log(this.communitiesToPost);
     },
 
-    submitCustomerForm() {
+    async submitCustomerForm() {
       console.log("Submitted Customer");
-      axios
+      await axios
         .put("http://localhost:3000/api/customer/" + this.customerToEdit.id, {
           name: this.name,
           address: this.streetAddress,
@@ -395,6 +395,7 @@ export default {
       this.city = "";
       this.state = "";
       this.country = "";
+      this.$emit('get-customers');
     },
     async getCustomers() {
       await axios

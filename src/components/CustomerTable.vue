@@ -79,7 +79,7 @@
                       <td
                         id="nonbutton"
                         name="name"
-                        class="font-bold minWidthName customerRow"
+                        class="font-bold minWidthName customerRow cursor-pointer"
                         @click="
                           [(showCommunities = true), getCustomer(customer.id)]
                         "

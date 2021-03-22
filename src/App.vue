@@ -93,7 +93,11 @@
         </div>
         <div class="text-sm pt-1 pb-2 font-bold">CUSTOMERS</div>
         <div class="h-32 overflow-y-auto flex-nowrap" id="customer filters">
-          <button class="text-left overflow-x-auto" @click="selectedCustomerId = all">
+          <button
+            id="all"
+            class="bold text-left overflow-x-auto focus:outline-none"
+            @click="(unBold(selectedCustomerId)), (selectedCustomerId = 'all'), bold()"
+          >
             ALL
           </button>
           <ul
@@ -101,10 +105,12 @@
             v-for="customer in this.customers"
             :key="customer.id"
           >
-            <button type="radio"
+            <button
+              type="radio"
+              name="customerFilter"
               :id="customer.name"
-              class="text-left overflow-x-auto"
-              @click="selectedCustomerId = customer.name"
+              class="text-left overflow-x-auto focus:outline-none"
+              @click="(unBold(selectedCustomerId)), (selectedCustomerId = customer.name), bold()"
             >
               {{ customer.name }}
             </button>
@@ -112,6 +118,32 @@
         </div>
       </div>
     </div>
+
+    <div
+      v-if="showCustomerPage == false"
+      id="numerical data cards"
+      class="w-auto z-30 absolute bottom-0 right-0 mb-6 mr-3"
+    >
+      <span
+        id="number of units"
+        class="rounded-lg shadow-md bg-white pl-4 pr-4 pt-3 pb-3 text-xl font-bold mr-2 ml-2"
+      >
+        {{ this.totalUnits }} Units
+      </span>
+      <span
+        id="number of communities"
+        class="rounded-lg shadow-md bg-white pl-4 pr-4 pt-3 pb-3 text-xl font-bold mr-2 ml-2"
+      >
+        {{ this.communities.length }} Communities
+      </span>
+      <span
+        id="number of customers"
+        class="rounded-lg shadow-md bg-white pl-4 pr-4 pt-3 pb-3 text-xl font-bold mr-2 ml-2"
+      >
+        {{ this.customers.length }} Customers
+      </span>
+    </div>
+
     <BaseMap
       :locations="this.locations"
       :digitalHumanChecked="this.digitalHumanChecked"
@@ -121,11 +153,6 @@
       :iotChecked="this.iotChecked"
       :selectedCustomerId="this.selectedCustomerId"
     />
-    <div
-      v-if="communitiesModal == true"
-      class="absolute z-40 inset-0 opacity-25 bg-black"
-    ></div>
-    <Modal v-model="communitiesModal" />
   </div>
 </template>
 
@@ -140,12 +167,11 @@ import axios from "axios";
 
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import BaseMap from "./components/BaseMap.vue";
-import Modal from "./components/Modal";
 import CustomerTable from "./components/CustomerTable";
 
 export default {
   name: "MapPage",
-  components: { BaseMap, Modal, CustomerTable },
+  components: { BaseMap, CustomerTable },
   data() {
     return {
       showCustomerPage: false,
@@ -162,10 +188,23 @@ export default {
       communityAddresses: [],
       selectedCustomerId: "all",
       test: false,
+      totalUnits: 0,
     };
   },
 
   methods: {
+    unBold(id) {
+      document.getElementById(id).classList.remove("bold");
+      console.log(id);
+      //document.getElementsByName("customerFilter").setAttribute( "class", "notBold" );
+    },
+    
+    bold() {
+      //document.getElementsByName("customerFilter").setAttribute("class", "notBold")
+      document.getElementById(this.selectedCustomerId).setAttribute( "class", "bold" );
+      console.log("ran bold");
+    },
+
     openModal() {
       this.communitiesModal = !this.communitiesModal;
     },
@@ -180,6 +219,7 @@ export default {
         console.log(addressAndColor);
         this.customerAddresses.push(addressAndColor);
         element.communities.forEach((community) => {
+          this.totalUnits += parseInt(community.units);
           const addressString =
             community.address + ", " + community.city + ", " + community.state;
           if (community.digital_human == true) {
@@ -190,7 +230,7 @@ export default {
               this.digitalHumanChecked,
               "digitalHuman",
               element.name,
-              community.name
+              community.name,
             ]);
           }
           if (community.core_pms == true) {
@@ -378,5 +418,11 @@ input[type="checkbox"]:focus + label::before {
 
 .filterHeight {
   height: 380px;
+}
+.notBold {
+  font-weight: normal;
+}
+.bold {
+  font-weight: 700;
 }
 </style>

@@ -1,5 +1,16 @@
 <template>
-  <div ref="map" id="mapContainer" class="basemap"></div>
+  <div ref="map" id="mapContainer" class="basemap">
+    <!--
+    <div id="numerical data cards" class="w-auto z-30 absolute bottom-0 right-0 mb-8 mr-3">
+      <span id="number of customers" class="rounded-lg shadow-md bg-white pl-4 pr-4 pt-3 pb-3 text-xl font-bold mr-2 ml-2">
+        Customers
+      </span>
+      <span id="number of customers" class="rounded-lg shadow-md bg-white pl-4 pr-4 pt-3 pb-3 text-xl font-bold mr-2 ml-2">
+        Communities
+      </span>
+    </div>
+    -->
+  </div>
 </template>
 
 <script>
@@ -30,6 +41,7 @@ export default {
         connect: "#3bd4ae",
         iot: "#94c127",
       },
+      featuresVisible: '',
       // map: null,
     };
   },
@@ -119,7 +131,9 @@ export default {
               "visibility",
               e.target.checked ? "visible" : "none"
             );
+            console.log(e)
           });
+          //this.featuresVisible = map.queryRenderedFeatures({layers: ['#ff6f48']}).length;
 
           map.on("mouseenter", layerID, function (e) {
             var coordinates = e.features[0].geometry.coordinates.slice();
@@ -147,38 +161,6 @@ export default {
             });
           });
         });
-
-        // pop up not working
-
-        // var popup = new mapboxgl.Popup({
-        //   closeButton: false,
-        //   closeOnClick: false,
-        // });
-
-        // map.on("mouseenter", "places", function (e) {
-        //   console.log("mouse");
-        //   // Change the cursor style as a UI indicator.
-        //   map.getCanvas().style.cursor = "pointer";
-
-        //   var coordinates = e.features[0].geometry.coordinates.slice();
-        //   var description = e.features[0].properties.owner;
-
-        //   // Ensure that if the map is zoomed out such that multiple
-        //   // copies of the feature are visible, the popup appears
-        //   // over the copy being pointed to.
-        //   while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-        //     coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        //   }
-
-        //   // Populate the popup and set its coordinates
-        //   // based on the feature found.
-        //   popup.setLngLat(coordinates).setHTML(description).addTo(map);
-        // });
-
-        // map.on("mouseleave", "places", function () {
-        //   map.getCanvas().style.cursor = "";
-        //   popup.remove();
-        // });
       });
     },
   },
